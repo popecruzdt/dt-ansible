@@ -7,7 +7,7 @@
     -
       name: check if oneagent is already installed
       win_reg_stat:
-        path: HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Dynatrace OneAgent
+        path: HKLM:\SYSTEM\CurrentControlSet\Services\Dynatrace OneAgent
         name: ImagePath
       register: dt_reg_key
 #    not ready
