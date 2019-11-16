@@ -1,7 +1,7 @@
 # dynatrace oneagent install on linux
 ---
 -
-  hosts: all
+  hosts: "{{ hosts_group }}"
   name: "dynatrace oneagent install on linux"
   tasks:
     -
@@ -12,11 +12,11 @@
     -
       name: download oneagent install file via https
       get_url:
-        url: https://hfn13693.live.dynatrace.com/api/v1/deployment/installer/agent/unix/default/latest?Api-Token={{ dt_install_token }}&arch=x86&flavor=default
+        url: "https://hfn13693.live.dynatrace.com/api/v1/deployment/installer/agent/unix/default/latest?Api-Token={{ dt_install_token }}&arch=x86&flavor=default"
         dest: /tmp/dynatrace-oneagent-linux-latest.sh
         mode: '0666'
     -
       name: "execute oneagent install file with root privileges"
       shell: "sh /tmp/dynatrace-oneagent-linux-latest.sh HOST_GROUP={{ dt_host_group }} APP_LOG_CONTENT_ACCESS={{ dt_app_log_content_access }}{% if dt_infra_only is defined %} INFRA_ONLY={{ dt_infra_only }}{% endif %}"
       become: yes
-      when: ansible_architecture != "armv7l" and agent_installed.stat.exists == False
+      when: ansible_architecture != "armv7l" and installed.stat.exists == False
