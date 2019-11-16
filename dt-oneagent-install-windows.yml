@@ -9,7 +9,7 @@
       win_reg_stat:
         path: HKLM:\SYSTEM\CurrentControlSet\Services\Dynatrace OneAgent
         name: ImagePath
-      register: dt_reg_key
+      register: installed
 #    not ready
 #    -
 #      name: check if oneagent binary exists
@@ -21,11 +21,11 @@
       win_get_url:
         url: "{{ dt_api_endpoint }}deployment/installer/agent/windows/default/latest?Api-Token={{ dt_install_token }}&arch=x86&flavor=default"
         dest: C:\Temp\dynatrace-oneagent-windows-latest.exe
-      when: dt_reg_key.stat.exists == False
+      when: installed.exists == False
     -
       name: "execute oneagent install file"
       win_package:
         path: C:\Temp\dynatrace-oneagent-windows-latest.exe
         arguments: /S
         state: present
-      when: dt_reg_key.stat.exists == False
+      when: installed.exists == False
