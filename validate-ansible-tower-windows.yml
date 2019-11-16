@@ -1,0 +1,11 @@
+# validate ansible tower execution on windows
+---
+-
+  hosts: "{{ hosts_group }}"
+  name: "validate ansible tower execution on windows"
+  tasks:
+    -
+      name: check if the c:\temp directory exists
+      win_stat:
+        path: C:\Temp
+      register: dt_temp_dir
