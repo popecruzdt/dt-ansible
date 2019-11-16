@@ -1,7 +1,7 @@
 # validate ansible tower execution on linux
 ---
 -
-  hosts: "{{ hosts_group }}""
+  hosts: "{{ hosts_group }}"
   name: "validate ansible tower execution on linux"
   tasks:
     -
