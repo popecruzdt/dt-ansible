@@ -1,0 +1,11 @@
+# validate ansible tower execution on linux
+---
+-
+  hosts: {{ hosts_group }}
+  name: "validate ansible tower execution on linux"
+  tasks:
+    -
+      name: "check the /opt directory as root"
+      shell:
+        cmd: ls /opt
+      become: yes
