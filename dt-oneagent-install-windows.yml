@@ -1,7 +1,7 @@
 # dynatrace oneagent install on windows
 ---
 -
-  hosts: all
+  hosts: "{{ hosts_group }}"
   name: "dynatrace oneagent install on windows"
   tasks:
     -
@@ -19,11 +19,13 @@
     -
       name: download oneagent install file via https
       get_url:
-        url: https://hfn13693.live.dynatrace.com/api/v1/deployment/installer/agent/windows/default/latest?Api-Token={{ dt_install_token }}&arch=x86&flavor=default
+        url: "{{ dt_api_endpoint }}deployment/installer/agent/windows/default/latest?Api-Token={{ dt_install_token }}&arch=x86&flavor=default"
         dest: C:\Temp\dynatrace-oneagent-windows-latest.exe
+      when: dt_reg_key.stat.exists == False
     -
       name: "execute oneagent install file"
       win_package:
         path: C:\Temp\dynatrace-oneagent-windows-latest.exe
         arguments: /S
         state: present
+      when: dt_reg_key.stat.exists == False
