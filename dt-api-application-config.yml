@@ -341,7 +341,7 @@
         url: "{{ dt_config_api_endpoint }}applicationDetectionRules/validator?Api-Token={{ dt_api_token }}"
         method: POST
         body:
-          id: "{{ dt_detection_rule_uuid }}"
+#          id: "{{ dt_detection_rule_uuid }}"
           applicationIdentifier: "{{ dt_web_application_id }}"
           filterConfig:
             pattern: "{{ dt_url_pattern }}"
