@@ -1,0 +1,365 @@
+# create dynatrace web application and detection rule
+# host_name
+# dt_config_api_endpoint
+# dt_api_token
+# dt_web_application_name
+# dt_detection_rule_uuid
+# dt_url_pattern
+---
+-
+  hosts: "{{ host_name }}"
+  name: "create dynatrace web application and detection rule"
+  tasks:
+    -
+      name: validate application detection rule uuid is available
+      uri:
+        url: "{{ dt_config_api_endpoint }}applicationDetectionRules?Api-Token={{ dt_api_token }}"
+        method: GET
+        return_content: yes
+        status_code: 200
+      register: existing_rules
+      failed_when: "'{{ dt_detection_rule_uuid }}' in existing_rules.content"
+    -
+      name: validate web application config payload
+      uri:
+        url: "{{ dt_config_api_endpoint }}applications/web/validator?Api-Token={{ dt_api_token }}"
+        method: POST
+        body:
+          name: "{{ dt_web_application_name }}"
+          realUserMonitoringEnabled: true
+          costControlUserSessionPercentage: 100
+          loadActionKeyPerformanceMetric: VISUALLY_COMPLETE
+          xhrActionKeyPerformanceMetric: ACTION_DURATION
+          loadActionApdexSettings:
+            toleratedThreshold: 3000
+            frustratingThreshold: 12000
+            toleratedFallbackThreshold: 3000
+            frustratingFallbackThreshold: 12000
+            considerJavaScriptErrors: true
+          xhrActionApdexSettings:
+            toleratedThreshold: 2500
+            frustratingThreshold: 10000
+            toleratedFallbackThreshold: 3000
+            frustratingFallbackThreshold: 12000
+            considerJavaScriptErrors: false
+          customActionApdexSettings:
+            toleratedThreshold: 3000
+            frustratingThreshold: 12000
+            toleratedFallbackThreshold: 3000
+            frustratingFallbackThreshold: 12000
+            considerJavaScriptErrors: true
+          waterfallSettings:
+            uncompressedResourcesThreshold: 860
+            resourcesThreshold: 100000
+            resourceBrowserCachingThreshold: 50
+            slowFirstPartyResourcesThreshold: 200000
+            slowThirdPartyResourcesThreshold: 200000
+            slowCdnResourcesThreshold: 200000
+            speedIndexVisuallyCompleteRatioThreshold: 50
+          monitoringSettings:
+            fetchRequests: false
+            xmlHttpRequest: true
+            javaScriptFrameworkSupport:
+              angular: true
+              dojo: false
+              extJS: false
+              icefaces: false
+              jQuery: true
+              mooTools: false
+              prototype: true
+              activeXObject: false
+            contentCapture:
+              resourceTimingSettings:
+                w3cResourceTimings: true
+                nonW3cResourceTimings: false
+                nonW3cResourceTimingsInstrumentationDelay: 50
+                resourceTimingCaptureType: CAPTURE_FULL_DETAILS
+                resourceTimingsDomainLimit: 10
+              javaScriptErrors: true
+              timeoutSettings:
+                timedActionSupport: false
+                temporaryActionLimit: 0
+                temporaryActionTotalTimeout: 100
+              visuallyCompleteAndSpeedIndex: true
+            excludeXhrRegex: ''
+            injectionMode: JAVASCRIPT_TAG
+            libraryFileLocation: ''
+            monitoringDataPath: ''
+            customConfigurationProperties: ''
+            serverRequestPathId: ''
+            secureCookieAttribute: false
+            cookiePlacementDomain: ''
+            cacheControlHeaderOptimizations: true
+            advancedJavaScriptTagSettings:
+              syncBeaconFirefox: false
+              syncBeaconInternetExplorer: false
+              instrumentUnsupportedAjaxFrameworks: false
+              specialCharactersToEscape: ''
+              maxActionNameLength: 100
+              maxErrorsToCapture: 10
+              additionalEventHandlers:
+                userMouseupEventForClicks: false
+                clickEventHandler: false
+                mouseupEventHandler: false
+                blurEventHandler: false
+                changeEventHandler: false
+                toStringMethod: false
+                maxDomNodesToInstrument: 5000
+              eventWrapperSettings:
+                click: false
+                mouseUp: false
+                change: false
+                blur: false
+                touchStart: false
+                touchEnd: false
+              globalEventCaptureSettings:
+                mouseUp: true
+                mouseDown: true
+                click: true
+                doubleClick: true
+                keyUp: true
+                keyDown: true
+                scroll: true
+                additionalEventCapturedAsUserInput: ''
+          userActionNamingSettings:
+            placeholders:
+            - name: myPlaceholder
+              input: PAGE_URL
+              processingPart: ALL
+              processingSteps:
+              - type: SUBSTRING
+                patternBefore: ".*b"
+                patternBeforeSearchType: FIRST
+                patternAfter: ".*a"
+                patternAfterSearchType: LAST
+                replacement: value
+              metadataId: 1
+              useGuessedElementIdentifier: false
+            loadActionNamingRules:
+            - template: Loading of {myPlaceholder}
+              conditions:
+              - operand1: "{myPlaceholder}"
+                operand2: foo
+                operator: CONTAINS
+            xhrActionNamingRules:
+            - template: Loading of {myPlaceholder}
+              conditions:
+              - operand1: "{myPlaceholder}"
+                operand2: foo
+                operator: CONTAINS
+            ignoreCase: true
+          metaDataCaptureSettings:
+          - type: JAVA_SCRIPT_VARIABLE
+            capturingName: variableName
+            name: display name
+          conversionGoals:
+          - name: conversionGoalName
+            type: UserAction
+            destinationDetails:
+              urlOrPath: url or path
+              matchType: Begins
+              caseSensitive: false
+            userActionDetails:
+              value: value to match
+              caseSensitive: true
+              matchType: Ends
+              matchEntity: ActionName
+              actionType: Load
+            visitDurationDetails:
+              durationInMillis: 1
+            visitNumActionDetails:
+              numUserActions: 2
+        body_format: json
+        status_code: 204
+        return_content: yes
+      register: new_web_application
+    -
+      name: create web application config
+      uri:
+        url: "{{ dt_config_api_endpoint }}applications/web?Api-Token={{ dt_api_token }}"
+        method: POST
+        body:
+          name: "{{ dt_web_application_name }}"
+          realUserMonitoringEnabled: true
+          costControlUserSessionPercentage: 100
+          loadActionKeyPerformanceMetric: VISUALLY_COMPLETE
+          xhrActionKeyPerformanceMetric: ACTION_DURATION
+          loadActionApdexSettings:
+            toleratedThreshold: 3000
+            frustratingThreshold: 12000
+            toleratedFallbackThreshold: 3000
+            frustratingFallbackThreshold: 12000
+            considerJavaScriptErrors: true
+          xhrActionApdexSettings:
+            toleratedThreshold: 2500
+            frustratingThreshold: 10000
+            toleratedFallbackThreshold: 3000
+            frustratingFallbackThreshold: 12000
+            considerJavaScriptErrors: false
+          customActionApdexSettings:
+            toleratedThreshold: 3000
+            frustratingThreshold: 12000
+            toleratedFallbackThreshold: 3000
+            frustratingFallbackThreshold: 12000
+            considerJavaScriptErrors: true
+          waterfallSettings:
+            uncompressedResourcesThreshold: 860
+            resourcesThreshold: 100000
+            resourceBrowserCachingThreshold: 50
+            slowFirstPartyResourcesThreshold: 200000
+            slowThirdPartyResourcesThreshold: 200000
+            slowCdnResourcesThreshold: 200000
+            speedIndexVisuallyCompleteRatioThreshold: 50
+          monitoringSettings:
+            fetchRequests: false
+            xmlHttpRequest: true
+            javaScriptFrameworkSupport:
+              angular: true
+              dojo: false
+              extJS: false
+              icefaces: false
+              jQuery: true
+              mooTools: false
+              prototype: true
+              activeXObject: false
+            contentCapture:
+              resourceTimingSettings:
+                w3cResourceTimings: true
+                nonW3cResourceTimings: false
+                nonW3cResourceTimingsInstrumentationDelay: 50
+                resourceTimingCaptureType: CAPTURE_FULL_DETAILS
+                resourceTimingsDomainLimit: 10
+              javaScriptErrors: true
+              timeoutSettings:
+                timedActionSupport: false
+                temporaryActionLimit: 0
+                temporaryActionTotalTimeout: 100
+              visuallyCompleteAndSpeedIndex: true
+            excludeXhrRegex: ''
+            injectionMode: JAVASCRIPT_TAG
+            libraryFileLocation: ''
+            monitoringDataPath: ''
+            customConfigurationProperties: ''
+            serverRequestPathId: ''
+            secureCookieAttribute: false
+            cookiePlacementDomain: ''
+            cacheControlHeaderOptimizations: true
+            advancedJavaScriptTagSettings:
+              syncBeaconFirefox: false
+              syncBeaconInternetExplorer: false
+              instrumentUnsupportedAjaxFrameworks: false
+              specialCharactersToEscape: ''
+              maxActionNameLength: 100
+              maxErrorsToCapture: 10
+              additionalEventHandlers:
+                userMouseupEventForClicks: false
+                clickEventHandler: false
+                mouseupEventHandler: false
+                blurEventHandler: false
+                changeEventHandler: false
+                toStringMethod: false
+                maxDomNodesToInstrument: 5000
+              eventWrapperSettings:
+                click: false
+                mouseUp: false
+                change: false
+                blur: false
+                touchStart: false
+                touchEnd: false
+              globalEventCaptureSettings:
+                mouseUp: true
+                mouseDown: true
+                click: true
+                doubleClick: true
+                keyUp: true
+                keyDown: true
+                scroll: true
+                additionalEventCapturedAsUserInput: ''
+          userActionNamingSettings:
+            placeholders:
+            - name: myPlaceholder
+              input: PAGE_URL
+              processingPart: ALL
+              processingSteps:
+              - type: SUBSTRING
+                patternBefore: ".*b"
+                patternBeforeSearchType: FIRST
+                patternAfter: ".*a"
+                patternAfterSearchType: LAST
+                replacement: value
+              metadataId: 1
+              useGuessedElementIdentifier: false
+            loadActionNamingRules:
+            - template: Loading of {myPlaceholder}
+              conditions:
+              - operand1: "{myPlaceholder}"
+                operand2: foo
+                operator: CONTAINS
+            xhrActionNamingRules:
+            - template: Loading of {myPlaceholder}
+              conditions:
+              - operand1: "{myPlaceholder}"
+                operand2: foo
+                operator: CONTAINS
+            ignoreCase: true
+          metaDataCaptureSettings:
+          - type: JAVA_SCRIPT_VARIABLE
+            capturingName: variableName
+            name: display name
+          conversionGoals:
+          - name: conversionGoalName
+            type: UserAction
+            destinationDetails:
+              urlOrPath: url or path
+              matchType: Begins
+              caseSensitive: false
+            userActionDetails:
+              value: value to match
+              caseSensitive: true
+              matchType: Ends
+              matchEntity: ActionName
+              actionType: Load
+            visitDurationDetails:
+              durationInMillis: 1
+            visitNumActionDetails:
+              numUserActions: 2
+        body_format: json
+        status_code: 201
+        return_content: yes
+      register: new_web_application
+    -
+      name: obtain web application id from response
+      set_fact:
+        dt_web_application_id: "{{ new_web_application.id }}"
+    -
+      name: validate application detection rule payload
+      uri:
+        url: "{{ dt_config_api_endpoint }}applicationDetectionRules/validator?Api-Token={{ dt_api_token }}"
+        method: POST
+        body:
+          id: "{{ dt_detection_rule_uuid }}"
+          applicationIdentifier: "{{ dt_web_application_id }}"
+          filterConfig:
+            pattern: "{{ dt_url_pattern }}"
+            applicationMatchType: CONTAINS
+            applicationMatchTarget: URL
+        body_format: json
+        status_code: 204
+        return_content: yes
+      register: new_detection_rule
+    -
+      name: create application detection rule
+      uri:
+        url: "{{ dt_config_api_endpoint }}applicationDetectionRules/{{ dt_detection_rule_uuid }}?Api-Token={{ dt_api_token }}"
+        method: PUT
+        body:
+          id: "{{ dt_detection_rule_uuid }}"
+          applicationIdentifier: "{{ dt_web_application_id }}"
+          filterConfig:
+            pattern: "{{ dt_url_pattern }}"
+            applicationMatchType: CONTAINS
+            applicationMatchTarget: URL
+        body_format: json
+        status_code: 201
+        return_content: yes
+      register: new_detection_rule
