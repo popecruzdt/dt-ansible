@@ -35,7 +35,7 @@
       name: obtain management zone id from json object
       set_fact:
         dt_mz_id: "{{ item.id }}"
-      loop: "{{ existing_mz_json.values}}"
+      loop: "{{ existing_mz_json.values|flatten(levels=1) }}"
       when: item.name == '{{ dt_mz_name }}'
       #dt_mz_uuid: "{{ existing_mz_json|json_query('values[?name == `{}`]|[0].id'.format({{ dt_mz_name }})) }}"
       #job_id: "{{ results|json_query('jobs[?jobSummary.destClientName == `{}`]|[0].jobSummary.jobId'.format(target_vm)) }}"
