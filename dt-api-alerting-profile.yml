@@ -1,10 +1,10 @@
 # create dynatrace alerting profile with management zone
-# host_name
-# dt_config_api_endpoint
-# dt_api_token
-# dt_mz_name
-# dt_mz_uuid
-# dt_ap_uuid
+# host_name -> target host to execute playbook
+# dt_config_api_endpoint -> dynatrace configuration api endpoint (include trailing /)
+# dt_api_token -> dynatrace api token with read & write access
+# dt_mz_name -> name of existing dynatrace management zone (used to name alerting profile)
+# dt_mz_64id -> unique 64 bit integer id of existing management zone
+# dt_ap_uuid -> unique UUID to assign new alerting profile
 ---
 -
   hosts: "{{ host_name }}"
@@ -27,7 +27,7 @@
         return_content: yes
         status_code: 200
       register: existing_mz
-      failed_when: "'{{ dt_mz_uuid }}' not in existing_mz.content"
+      failed_when: "'{{ dt_mz_64id }}' not in existing_mz.content"
     -
       name: validate alerting profile payload
       uri:
@@ -60,7 +60,7 @@
             tagFilter:
               includeMode: NONE
             delayInMinutes: 0
-          managementZoneId: "{{ dt_mz_uuid }}"
+          managementZoneId: "{{ dt_mz_64id }}"
           eventTypeFilters: []
         body_format: json
         status_code: 204
@@ -78,34 +78,28 @@
           - severityLevel: ERROR
             tagFilter:
               includeMode: NONE
-              #tagFilters: []
             delayInMinutes: 15
           - severityLevel: PERFORMANCE
             tagFilter:
               includeMode: NONE
-              #tagFilters: []
             delayInMinutes: 15
           - severityLevel: RESOURCE_CONTENTION
             tagFilter:
               includeMode: NONE
-              #tagFilters: []
             delayInMinutes: 15
           - severityLevel: CUSTOM_ALERT
             tagFilter:
               includeMode: NONE
-              #tagFilters: []
             delayInMinutes: 0
           - severityLevel: MONITORING_UNAVAILABLE
             tagFilter:
               includeMode: NONE
-              #tagFilters: []
             delayInMinutes: 0
           - severityLevel: AVAILABILITY
             tagFilter:
               includeMode: NONE
-              #tagFilters: []
             delayInMinutes: 0
-          managementZoneId: "{{ dt_mz_uuid }}"
+          managementZoneId: "{{ dt_mz_64id }}"
           eventTypeFilters: []
         body_format: json
         status_code: 201

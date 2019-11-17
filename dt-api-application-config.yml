@@ -1,10 +1,10 @@
 # create dynatrace web application and detection rule
-# host_name
-# dt_config_api_endpoint
-# dt_api_token
-# dt_web_application_name
-# dt_detection_rule_uuid
-# dt_url_pattern
+# host_name -> target host to execute playbook
+# dt_config_api_endpoint -> dynatrace configuration api endpoint (include trailing /)
+# dt_api_token -> dynatrace api token with read & write access
+# dt_web_application_name -> name to assign dynatrace web application
+# dt_detection_rule_uuid -> unique UUID to assign dynatrace application detection rule
+# dt_url_pattern -> url pattern to match dynatrace application detection rule (evaluated as 'contains')
 ---
 -
   hosts: "{{ host_name }}"

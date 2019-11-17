@@ -1,9 +1,10 @@
 # create dynatrace management zone with host group value
-# host_name
-# dt_config_api_endpoint
-# dt_api_token
-# dt_host_group
-# dt_mz_uuid
+# host_name -> target host to execute playbook
+# dt_config_api_endpoint -> dynatrace configuration api endpoint (include trailing /)
+# dt_api_token -> dynatrace api token with read & write access
+# dt_mz_name -> name of assign dynatrace management zone
+# dt_mz_64id -> unique 64 bit integer id to assign dynatrace management zone
+# dt_host_group -> name of existing host group to apply to rules
 ---
 -
   hosts: "{{ host_name }}"
@@ -17,14 +18,14 @@
         return_content: yes
         status_code: 200
       register: existing_mz
-      failed_when: "'{{ dt_mz_uuid }}' in existing_mz.content"
+      failed_when: "'{{ dt_mz_64id }}' in existing_mz.content"
     -
       name: validate management zone payload
       uri:
         url: "{{ dt_config_api_endpoint }}managementZones/validator?Api-Token={{ dt_api_token }}"
         method: POST
         body:
-          name: "{{ dt_host_group }}"
+          name: "{{ dt_mz_name }}"
           rules:
           - type: SERVICE
             enabled: true
@@ -81,11 +82,11 @@
     -
       name: create management zone
       uri:
-        url: "{{ dt_config_api_endpoint }}managementZones/{{ dt_mz_uuid }}?Api-Token={{ dt_api_token }}"
+        url: "{{ dt_config_api_endpoint }}managementZones/{{ dt_mz_64id }}?Api-Token={{ dt_api_token }}"
         method: PUT
         body:
-          id: "{{ dt_mz_uuid }}"
-          name: "{{ dt_host_group }}"
+          id: "{{ dt_mz_64id }}"
+          name: "{{ dt_mz_name }}"
           rules:
           - type: SERVICE
             enabled: true
