@@ -1,4 +1,9 @@
 # create dynatrace management zone with host group value
+# host_name
+# dt_config_api_endpoint
+# dt_api_token
+# dt_host_group
+# dt_mz_uuid
 ---
 -
   hosts: "{{ host_name }}"

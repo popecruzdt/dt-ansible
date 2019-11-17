@@ -1,0 +1,127 @@
+# create dynatrace alerting profile with management zone
+# host_name
+# dt_config_api_endpoint
+# dt_api_token
+# dt_mz_name
+# dt_ap_uuid
+---
+-
+  hosts: "{{ host_name }}"
+  name: "create dynatrace alerting profile with management zone"
+  tasks:
+    -
+      name: validate alerting profile uuid is available
+      uri:
+        url: "{{ dt_config_api_endpoint }}alertingProfiles?Api-Token={{ dt_api_token }}"
+        method: GET
+        return_content: yes
+        status_code: 200
+      register: existing_ap
+      failed_when: "'{{ dt_ap_uuid }}' in existing_ap.content"
+    -
+      name: get existing management zones
+      uri:
+        url: "{{ dt_config_api_endpoint }}managementZones?Api-Token={{ dt_api_token }}"
+        method: GET
+        return_content: yes
+        status_code: 200
+      register: existing_mz
+      failed_when: "'{{ dt_mz_name }}' not in existing_mz.content"
+    -
+      name: convert response to json object
+      set_fact:
+        existing_mz_json: "{{ existing_mz.content | from_json }}"
+    -
+      name: obtain management zone id from json object
+      set_fact:
+        dt_mz_uuid: "{{ existing_mz_json|json_query('values[?name == ``]|[0].id'.format({{ dt_mz_name }})) }}"
+        #job_id: "{{ results|json_query('jobs[?jobSummary.destClientName == `{}`]|[0].jobSummary.jobId'.format(target_vm)) }}"
+    -
+      name: validate alerting profile payload
+      uri:
+        url: "{{ dt_config_api_endpoint }}alertingProfiles/validator?Api-Token={{ dt_api_token }}"
+        method: POST
+        body:
+          displayName: "{{ dt_mz_name }}"
+          rules:
+          - severityLevel: ERROR
+            tagFilter:
+              includeMode: NONE
+              tagFilters: []
+            delayInMinutes: 15
+          - severityLevel: PERFORMANCE
+            tagFilter:
+              includeMode: NONE
+              tagFilters: []
+            delayInMinutes: 15
+          - severityLevel: RESOURCE_CONTENTION
+            tagFilter:
+              includeMode: NONE
+              tagFilters: []
+            delayInMinutes: 15
+          - severityLevel: CUSTOM_ALERT
+            tagFilter:
+              includeMode: NONE
+              tagFilters: []
+            delayInMinutes: 0
+          - severityLevel: MONITORING_UNAVAILABLE
+            tagFilter:
+              includeMode: NONE
+              tagFilters: []
+            delayInMinutes: 0
+          - severityLevel: AVAILABILITY
+            tagFilter:
+              includeMode: NONE
+              tagFilters: []
+            delayInMinutes: 0
+          managementZoneId: "{{ dt_mz_uuid }}"
+          eventTypeFilters: []
+        body_format: json
+        status_code: 204
+        return_content: yes
+      register: new_mz
+    -
+      name: create alerting profile
+      uri:
+        url: "{{ dt_config_api_endpoint }}managementZones/{{ dt_mz_uuid }}?Api-Token={{ dt_api_token }}"
+        method: PUT
+        body:
+          id: "{{ dt_mz_uuid }}"
+          displayName: "{{ dt_mz_name }}"
+          rules:
+          - severityLevel: ERROR
+            tagFilter:
+              includeMode: NONE
+              tagFilters: []
+            delayInMinutes: 15
+          - severityLevel: PERFORMANCE
+            tagFilter:
+              includeMode: NONE
+              tagFilters: []
+            delayInMinutes: 15
+          - severityLevel: RESOURCE_CONTENTION
+            tagFilter:
+              includeMode: NONE
+              tagFilters: []
+            delayInMinutes: 15
+          - severityLevel: CUSTOM_ALERT
+            tagFilter:
+              includeMode: NONE
+              tagFilters: []
+            delayInMinutes: 0
+          - severityLevel: MONITORING_UNAVAILABLE
+            tagFilter:
+              includeMode: NONE
+              tagFilters: []
+            delayInMinutes: 0
+          - severityLevel: AVAILABILITY
+            tagFilter:
+              includeMode: NONE
+              tagFilters: []
+            delayInMinutes: 0
+          managementZoneId: "{{ dt_mz_uuid }}"
+          eventTypeFilters: []
+        body_format: json
+        status_code: 201
+        return_content: yes
+      register: new_mz
