@@ -69,7 +69,7 @@
     -
       name: create alerting profile
       uri:
-        url: "{{ dt_config_api_endpoint }}managementZones/{{ dt_mz_uuid }}?Api-Token={{ dt_api_token }}"
+        url: "{{ dt_config_api_endpoint }}alertingProfiles/{{ dt_ap_uuid }}?Api-Token={{ dt_api_token }}"
         method: PUT
         body:
           id: "{{ dt_ap_uuid }}"
