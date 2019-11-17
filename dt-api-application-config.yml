@@ -328,9 +328,13 @@
         return_content: yes
       register: new_web_application
     -
-      name: obtain web application id from response
+      name: convert response to json object
       set_fact:
-        dt_web_application_id: "{{ new_web_application.id }}"
+        new_web_application_json: "{{ new_web_application | from.json }}"
+    -
+      name: obtain web application id from json object
+      set_fact:
+        dt_web_application_id: "{{ new_web_application_json.id }}"
     -
       name: validate application detection rule payload
       uri:
