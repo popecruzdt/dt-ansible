@@ -10,12 +10,6 @@
         path: HKLM:\SYSTEM\CurrentControlSet\Services\Dynatrace OneAgent
         name: ImagePath
       register: installed
-#    not ready
-#    -
-#      name: check if oneagent binary exists
-#      win_stat:
-#        path: {{ dt_reg_key.value }}
-#      register: dt_binary_file
     -
       name: download oneagent install file via https
       win_get_url:
