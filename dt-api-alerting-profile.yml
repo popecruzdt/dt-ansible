@@ -3,6 +3,7 @@
 # dt_config_api_endpoint
 # dt_api_token
 # dt_mz_name
+# dt_mz_uuid
 # dt_ap_uuid
 ---
 -
@@ -19,26 +20,14 @@
       register: existing_ap
       failed_when: "'{{ dt_ap_uuid }}' in existing_ap.content"
     -
-      name: get existing management zones
+      name: validate management zone uuid exists
       uri:
         url: "{{ dt_config_api_endpoint }}managementZones?Api-Token={{ dt_api_token }}"
         method: GET
         return_content: yes
         status_code: 200
       register: existing_mz
-      failed_when: "'{{ dt_mz_name }}' not in existing_mz.content"
-    -
-      name: convert response to json object
-      set_fact:
-        existing_mz_json: "{{ existing_mz.content | from_json }}"
-    -
-      name: obtain management zone id from json object
-      set_fact:
-        dt_mz_id: "{{ item.id }}"
-      with_items: "{{ existing_mz_json.values }}"
-      when: item.name == '{{ dt_mz_name }}'
-      #dt_mz_uuid: "{{ existing_mz_json|json_query('values[?name == `{}`]|[0].id'.format({{ dt_mz_name }})) }}"
-      #job_id: "{{ results|json_query('jobs[?jobSummary.destClientName == `{}`]|[0].jobSummary.jobId'.format(target_vm)) }}"
+      failed_when: "'{{ dt_mz_uuid }}' not in existing_mz.content"
     -
       name: validate alerting profile payload
       uri:
@@ -89,7 +78,7 @@
         url: "{{ dt_config_api_endpoint }}managementZones/{{ dt_mz_uuid }}?Api-Token={{ dt_api_token }}"
         method: PUT
         body:
-          id: "{{ dt_mz_uuid }}"
+          id: "{{ dt_ap_uuid }}"
           displayName: "{{ dt_mz_name }}"
           rules:
           - severityLevel: ERROR
