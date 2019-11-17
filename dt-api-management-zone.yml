@@ -16,7 +16,7 @@
     -
       name: create management zone
       uri:
-        url: "{{ dt_config_api_endpoint }}managementZones/{{ dt_mz_uuid }}?Api-Token={{ dynatrace_token }}"
+        url: "{{ dt_config_api_endpoint }}managementZones/{{ dt_mz_uuid }}?Api-Token={{ dt_api_token }}"
         method: PUT
         body:
           id: "{{ dt_mz_uuid }}"
