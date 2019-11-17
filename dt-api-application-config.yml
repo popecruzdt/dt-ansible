@@ -330,7 +330,7 @@
     -
       name: convert response to json object
       set_fact:
-        new_web_application_json: "{{ new_web_application | from.json }}"
+        new_web_application_json: "{{ new_web_application | from_json }}"
     -
       name: obtain web application id from json object
       set_fact:
