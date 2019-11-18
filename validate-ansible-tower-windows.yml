@@ -1,11 +1,12 @@
 # validate ansible tower execution on windows
+# hosts_group -> inventory group of hosts to execute playbook on
 ---
 -
   hosts: "{{ hosts_group }}"
   name: "validate ansible tower execution on windows"
   tasks:
     -
-      name: check if the c:\temp directory exists
+      name: "check if the c:\temp directory exists"
       win_stat:
         path: C:\Temp
-      register: dt_temp_dir
+      register: temp_dir

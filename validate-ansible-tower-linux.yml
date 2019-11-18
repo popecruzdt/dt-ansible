@@ -1,4 +1,5 @@
 # validate ansible tower execution on linux
+# hosts_group -> inventory group of hosts to execute playbook on
 ---
 -
   hosts: "{{ hosts_group }}"

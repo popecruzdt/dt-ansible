@@ -1,17 +1,23 @@
 # dynatrace oneagent install on windows
+# hosts_group -> inventory group of hosts to execute playbook on
+# dt_api_endpoint -> dynatrace environment api endpoint (include trailing /)
+# dt_install_token -> dynatrace api install token
+# dt_host_group: -> dynatrace host group name
+# dt_app_log_content_access: -> flag to enable or disable log analytics on host (0 or 1)
+# dt_infra_only: -> flag to set cloud infrastructure monitoring mode on host (0 or 1)
 ---
 -
   hosts: "{{ hosts_group }}"
   name: "dynatrace oneagent install on windows"
   tasks:
     -
-      name: check if oneagent is already installed
+      name: "check if oneagent is already installed"
       win_reg_stat:
         path: HKLM:\SYSTEM\CurrentControlSet\Services\Dynatrace OneAgent
         name: ImagePath
       register: installed
     -
-      name: download oneagent install file via https
+      name: "download oneagent install file via https"
       win_get_url:
         url: "{{ dt_api_endpoint }}deployment/installer/agent/windows/default/latest?Api-Token={{ dt_install_token }}&arch=x86&flavor=default"
         dest: C:\Temp\dynatrace-oneagent-windows-latest.exe
