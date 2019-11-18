@@ -18,7 +18,6 @@
         return_content: yes
         status_code: 200
       register: existing_mz
-      #failed_when: "'{{ dt_mz_64id }}' in existing_mz.content"
       failed_when: 'dt_mz_64id|string in existing_mz.content'
     -
       name: validate management zone payload

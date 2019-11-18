@@ -27,7 +27,6 @@
         return_content: yes
         status_code: 200
       register: existing_mz
-      #failed_when: "'{{ dt_mz_64id }}' not in existing_mz.content"
       failed_when: 'dt_mz_64id|string not in existing_mz.content'
     -
       name: validate alerting profile payload
