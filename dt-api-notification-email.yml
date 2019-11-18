@@ -1,0 +1,63 @@
+# create dynatrace management zone with host group value
+# host_name -> target host to execute playbook
+# dt_config_api_endpoint -> dynatrace configuration api endpoint (include trailing /)
+# dt_api_token -> dynatrace api token with read & write access
+# dt_notification_name -> name to assign dynatrace email notification
+# dt_notification_uuid -> unique UUID id to assign dynatrace email notification
+# dt_email_receiver -> email address for to: recipients
+# dt_ap_uuid -> unique UUID id of dynatrace alerting profile to trigger email notification
+---
+-
+  hosts: "{{ host_name }}"
+  name: "create dynatrace email notification rule"
+  tasks:
+    -
+      name: validate notification UUID is available
+      uri:
+        url: "{{ dt_config_api_endpoint }}notifications?Api-Token={{ dt_api_token }}"
+        method: GET
+        return_content: yes
+        status_code: 200
+      register: existing_notifications
+      failed_when: 'dt_notification_uuid|string in existing_notifications.content'
+    -
+      name: validate notification rule payload
+      uri:
+        url: "{{ dt_config_api_endpoint }}notifications/validator?Api-Token={{ dt_api_token }}"
+        method: POST
+        body:
+          type: EMAIL
+          name: "{{ dt_notification_name }}"
+          alertingProfile: "{{ dt_ap_uuid }}"
+          active: true
+          subject: "{State} Problem {ProblemID}: {ImpactedEntity}"
+          body: "{ProblemDetailsHTML}"
+          receivers:
+          - "{{ dt_email_receiver }}"
+          ccReceivers: []
+          shouldSendForResolvedProblems: true
+        body_format: json
+        status_code: 204
+        return_content: yes
+      register: new_notification
+    -
+      name: create notification rule
+      uri:
+        url: "{{ dt_config_api_endpoint }}notifications/{{ dt_notification_uuid }}?Api-Token={{ dt_api_token }}"
+        method: PUT
+        body:
+          id: "{{ dt_notification_uuid }}"
+          type: EMAIL
+          name: "{{ dt_notification_name }}"
+          alertingProfile: "{{ dt_ap_uuid }}"
+          active: true
+          subject: "{State} Problem {ProblemID}: {ImpactedEntity}"
+          body: "{ProblemDetailsHTML}"
+          receivers:
+          - "{{ dt_email_receiver }}"
+          ccReceivers: []
+          shouldSendForResolvedProblems: true
+        body_format: json
+        status_code: 201
+        return_content: yes
+      register: new_notification
