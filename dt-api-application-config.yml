@@ -18,7 +18,8 @@
         return_content: yes
         status_code: 200
       register: existing_rules
-      failed_when: "'{{ dt_detection_rule_uuid }}' in existing_rules.content"
+      #failed_when: "'{{ dt_detection_rule_uuid }}' in existing_rules.content"
+      failed_when: 'dt_detection_rule_uuid|string in existing_mz.content'
     -
       name: validate web application config payload
       uri:

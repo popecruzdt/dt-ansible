@@ -11,14 +11,15 @@
   name: "create dynatrace management zone with host group value"
   tasks:
     -
-      name: validate management zone uuid is available
+      name: validate management zone 64 bit id is available
       uri:
         url: "{{ dt_config_api_endpoint }}managementZones?Api-Token={{ dt_api_token }}"
         method: GET
         return_content: yes
         status_code: 200
       register: existing_mz
-      failed_when: "'{{ dt_mz_64id }}' in existing_mz.content"
+      #failed_when: "'{{ dt_mz_64id }}' in existing_mz.content"
+      failed_when: 'dt_mz_64id|string in existing_mz.content'
     -
       name: validate management zone payload
       uri:
