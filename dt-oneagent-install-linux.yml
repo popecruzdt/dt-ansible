@@ -2,9 +2,9 @@
 # hosts_group -> inventory group of hosts to execute playbook on
 # dt_api_endpoint -> dynatrace environment api endpoint (include trailing /)
 # dt_install_token -> dynatrace api install token
-# dt_host_group: -> dynatrace host group name
-# dt_app_log_content_access: -> flag to enable or disable log analytics on host (0 or 1)
-# dt_infra_only: -> flag to set cloud infrastructure monitoring mode on host (0 or 1)
+# dt_host_group -> dynatrace host group name
+# dt_app_log_content_access -> flag to enable or disable log analytics on host (0 or 1)
+# dt_infra_only -> flag to set cloud infrastructure monitoring mode on host (0 or 1)
 ---
 -
   hosts: "{{ hosts_group }}"
@@ -20,7 +20,7 @@
       get_url:
         url: "{{ dt_api_endpoint }}deployment/installer/agent/unix/default/latest?Api-Token={{ dt_install_token }}&arch=x86&flavor=default"
         dest: /tmp/dynatrace-oneagent-linux-latest.sh
-        mode: '0666'
+        mode: '0777'
     -
       name: "install: execute oneagent install file with root privileges"
       shell: "sh /tmp/dynatrace-oneagent-linux-latest.sh HOST_GROUP={{ dt_host_group }} APP_LOG_CONTENT_ACCESS={{ dt_app_log_content_access }}{% if dt_infra_only is defined %} INFRA_ONLY={{ dt_infra_only }}{% endif %}"

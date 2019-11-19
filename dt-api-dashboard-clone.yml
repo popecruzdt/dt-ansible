@@ -1,0 +1,55 @@
+# clone existing dynatrace dashboard (template)
+# host_name -> target host to execute playbook
+# dt_config_api_endpoint -> dynatrace configuration api endpoint (include trailing /)
+# dt_api_token -> dynatrace api token with read & write access
+# dt_dashboard_name -> name to assign dynatrace dashboard
+# dt_dashboard_uuid -> unique UUID id to assign dynatrace dashboard
+# dt_clone_uuid -> unique UUID id of the dynatrace dashboard to clone
+# dt_app_id -> unique id of the dynatrace web application (for application tiles)
+---
+-
+  hosts: "{{ host_name }}"
+  name: "clone existing dynatrace dashboard (template)"
+  tasks:
+    -
+      name: validate dashboard UUID is available
+      uri:
+        url: "{{ dt_config_api_endpoint }}dashboards?Api-Token={{ dt_api_token }}"
+        method: GET
+        return_content: yes
+        status_code: 200
+      register: existing_dashboards
+      failed_when: 'dt_dashboard_uuid|string in existing_dashboards.content'
+    -
+      name: validate dashboard to clone UUID exists
+      uri:
+        url: "{{ dt_config_api_endpoint }}dashboards?Api-Token={{ dt_api_token }}"
+        method: GET
+        return_content: yes
+        status_code: 200
+      register: existing_dashboards
+      failed_when: 'dt_clone_uuid|string not in existing_ap.content'
+    -
+      name: "download dashboard to clone json"
+      get_url:
+        url: "{{ dt_config_api_endpoint }}dashboards/{{ dt_clone_uuid }}?Api-Token={{ dt_api_token }}"
+        dest: /tmp/dt_dashboard_clone.json
+        mode: '0666'
+    -
+      name: validate dashboard payload
+      uri:
+        url: "{{ dt_config_api_endpoint }}dashboards/validator?Api-Token={{ dt_api_token }}"
+        method: POST
+        src: /tmp/dt_dashboard_clone.json
+        status_code: 204
+        return_content: yes
+      register: new_dashboard
+    -
+      name: create new dashboard
+      uri:
+        url: "{{ dt_config_api_endpoint }}dashboards/{{ dt_dashboard_uuid }}?Api-Token={{ dt_api_token }}"
+        method: PUT
+        src: /tmp/dt_dashboard_clone.json
+        status_code: 201
+        return_content: yes
+      register: new_dashboard

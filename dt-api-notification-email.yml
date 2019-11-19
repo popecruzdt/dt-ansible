@@ -1,4 +1,4 @@
-# create dynatrace management zone with host group value
+# create dynatrace notification email with alerting profile
 # host_name -> target host to execute playbook
 # dt_config_api_endpoint -> dynatrace configuration api endpoint (include trailing /)
 # dt_api_token -> dynatrace api token with read & write access
