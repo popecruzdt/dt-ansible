@@ -1,0 +1,22 @@
+# send email with dynatrace onboarding summary
+# host_name -> target host to execute playbook
+# smtp_host -> mail server smtp hosts
+# smtp_port -> mail server smtp smtp
+# smtp_username -> mail server username
+# smtp_password -> mail server password
+# dt_email_receiver -> email recipient address
+# dt_host_group -> dynatrace host group name 
+---
+-
+  hosts: "{{ host_name }}"
+  name: "send email with dynatrace onboarding summary"
+  tasks:
+    - name: send email with summary
+      mail:
+        host: "{{ smtp_host }}"
+        port: "{{ smtp_port }}"
+        username: "{{ smtp_username }}"
+        password: "{{ smtp_password }}"
+        to: "{{ dt_email_receiver }}"
+        subject: "Ansible Tower Dynatrace Onboarding of {{ dt_host_group }}"
+        body: "System {{ dt_host_group }} has been successfully provisioned."
