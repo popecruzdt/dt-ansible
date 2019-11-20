@@ -28,7 +28,7 @@
         return_content: yes
         status_code: 200
       register: existing_dashboards
-      failed_when: 'dt_clone_uuid|string not in existing_ap.content'
+      failed_when: 'dt_clone_uuid|string not in existing_dashboards.content'
     -
       name: "download dashboard to clone json"
       get_url:
