@@ -40,7 +40,7 @@
       uri:
         url: "{{ dt_config_api_endpoint }}dashboards/validator?Api-Token={{ dt_api_token }}"
         method: POST
-        src: /tmp/dt_dashboard_clone.json
+        remote_src: /tmp/dt_dashboard_clone.json
         status_code: 204
         return_content: yes
       register: new_dashboard
