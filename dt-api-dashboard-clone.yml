@@ -34,7 +34,7 @@
       get_url:
         url: "{{ dt_config_api_endpoint }}dashboards/{{ dt_clone_uuid }}?Api-Token={{ dt_api_token }}"
         dest: /tmp/dt_dashboard_clone.json
-        mode: '0666'
+        mode: '0777'
     -
       name: validate dashboard payload
       uri:
