@@ -39,23 +39,29 @@
       name: "replace dt_clone_uuid with dt_dashboard_uuid in json"
       replace:
         path: /tmp/dt_dashboard_clone.json
-        regexp: "deb69"
-        replace: "tpc19"
+        regexp: "{{ dt_clone_uuid }}"
+        replace: "{{ dt_dashboard_uuid }}"
     -
-      name: validate dashboard payload
-      uri:
-        url: "{{ dt_config_api_endpoint }}dashboards/validator?Api-Token={{ dt_api_token }}"
-        method: POST
-        remote_src: /tmp/dt_dashboard_clone.json
-        status_code: 204
-        return_content: yes
-      register: new_dashboard
-    -
-      name: create new dashboard
-      uri:
-        url: "{{ dt_config_api_endpoint }}dashboards/{{ dt_dashboard_uuid }}?Api-Token={{ dt_api_token }}"
-        method: PUT
-        src: /tmp/dt_dashboard_clone.json
-        status_code: 201
-        return_content: yes
-      register: new_dashboard
+      name: "replace dashboard name with dt_dashboard_name in json"
+      replace:
+        path: /tmp/dt_dashboard_clone.json
+        regexp: "\"name\": \"[app_name] application overview\""
+        replace: "\"name\": \"{{ dt_dashboard_name }}\""
+#    -
+#      name: validate dashboard payload
+#      uri:
+#        url: "{{ dt_config_api_endpoint }}dashboards/validator?Api-Token={{ dt_api_token }}"
+#        method: POST
+#        remote_src: /tmp/dt_dashboard_clone.json
+#        status_code: 204
+#        return_content: yes
+#      register: new_dashboard
+#    -
+#      name: create new dashboard
+#      uri:
+#        url: "{{ dt_config_api_endpoint }}dashboards/{{ dt_dashboard_uuid }}?Api-Token={{ dt_api_token }}"
+#        method: PUT
+#        src: /tmp/dt_dashboard_clone.json
+#        status_code: 201
+#        return_content: yes
+#      register: new_dashboard
