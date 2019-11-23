@@ -35,6 +35,7 @@
         url: "{{ dt_config_api_endpoint }}dashboards/{{ dt_clone_uuid }}?Api-Token={{ dt_api_token }}"
         dest: /tmp/dt_dashboard_clone.json
         mode: '0777'
+        force: yes
     -
       name: "replace dt_clone_uuid with dt_dashboard_uuid in json"
       replace:
