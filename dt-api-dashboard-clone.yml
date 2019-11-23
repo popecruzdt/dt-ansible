@@ -39,8 +39,8 @@
       name: "replace dt_clone_uuid with dt_dashboard_uuid in json"
       replace:
         path: /tmp/dt_dashboard_clone.json
-        regexp: 'regexp: \"id\":\"\s[A-Za-z0-9 ]*\"'
-        replace: '\"id\":\"{{ dt_dashboard_uuid }}\"'
+        regexp: "{{ dt_clone_uuid }}"
+        replace: "{{ dt_dashboard_uuid }}"
     -
       name: validate dashboard payload
       uri:
