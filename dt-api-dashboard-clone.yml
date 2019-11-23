@@ -46,7 +46,7 @@
       name: "replace dashboard name with dt_dashboard_name in json"
       replace:
         path: /tmp/dt_dashboard_clone.json
-        regexp: "\"name\": \"[app_name] application overview\""
+        regexp: "\"name\": \"[^\"]+\""
         replace: "\"name\": \"{{ dt_dashboard_name }}\""
 #    -
 #      name: validate dashboard payload
