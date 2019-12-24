@@ -5,7 +5,7 @@
 # smtp_username -> mail server username
 # smtp_password -> mail server password
 # dt_email_receiver -> email recipient address
-# dt_host_group -> dynatrace host group name 
+# dt_host_group -> dynatrace host group name
 ---
 -
   hosts: "{{ host_name }}"
@@ -18,5 +18,6 @@
         username: "{{ smtp_username }}"
         password: "{{ smtp_password }}"
         to: "{{ dt_email_receiver }}"
+        from: "{{ dt_email_receiver }}"
         subject: "Ansible Tower Dynatrace Onboarding of {{ dt_host_group }}"
         body: "System {{ dt_host_group }} has been successfully provisioned."
