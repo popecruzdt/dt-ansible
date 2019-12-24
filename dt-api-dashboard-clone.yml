@@ -61,6 +61,7 @@
         url: "{{ dt_config_api_endpoint }}dashboards/{{ dt_dashboard_uuid }}?Api-Token={{ dt_api_token }}"
         method: PUT
         src: /tmp/dt_dashboard_clone.json
+        remote_src: yes
         status_code: 201
         return_content: yes
       register: new_dashboard
