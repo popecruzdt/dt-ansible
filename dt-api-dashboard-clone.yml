@@ -57,6 +57,13 @@
         regexp: "\"dashboardFilter\":{\"timeframe\":\"\",\"managementZone\":null}"
         replace: "\"dashboardFilter\":{\"timeframe\":\"\",\"managementZone\":{\"id\":\"{{ dt_mz_64id }}\",\"name\":\"{{ dt_mz_name }}\"}}"
     -
+      name: "replace web application id with dt_app_id in json"
+      replace:
+        path: /tmp/dt_dashboard_clone.json
+        regexp: "\"APPLICATION-[^\"]+\""
+        replace: "\"{{ dt_app_id }}\""
+
+    -
       name: "create new dashboard"
       uri:
         url: "{{ dt_config_api_endpoint }}dashboards/{{ dt_dashboard_uuid }}?Api-Token={{ dt_api_token }}"
