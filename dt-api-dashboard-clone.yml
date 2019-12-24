@@ -62,6 +62,8 @@
         method: PUT
         src: /tmp/dt_dashboard_clone.json
         remote_src: yes
+        headers:
+          Content-Type: "application/json"
         status_code: 201
         return_content: yes
       register: new_dashboard
