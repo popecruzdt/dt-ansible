@@ -55,7 +55,7 @@
       replace:
         path: /tmp/dt_dashboard_clone.json
         regexp: "(\"managementZone\":null)"
-        replace: "\"managementZone\":{\"id\":\"{{ dt_mz_64id }}\",\"name\":\"{{ dt_mz_name }}\"}"
+        replace: "\"managementZone\":{\"id\":\"{{ dt_mz_64id }}\",\"name\":\"{{ dt_mz_name }}\""
     -
       name: "create new dashboard"
       uri:
