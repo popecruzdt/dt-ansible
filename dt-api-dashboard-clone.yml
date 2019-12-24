@@ -6,6 +6,7 @@
 # dt_dashboard_uuid -> unique UUID id to assign dynatrace dashboard
 # dt_clone_uuid -> unique UUID id of the dynatrace dashboard to clone
 # dt_mz_64id -> unique 64 bit integer id of dynatrace management zone
+# dt_mz_name -> name of dynatrace management zone
 # dt_app_id -> unique id of the dynatrace web application (for application tiles)
 ---
 -
@@ -54,7 +55,7 @@
       replace:
         path: /tmp/dt_dashboard_clone.json
         regexp: "(\"managementZone\":null)"
-        replace: "\"managementZone\":\"{{ dt_mz_64id }}\""
+        replace: "\"managementZone\":\"{\"id\":\"{{ dt_mz_64id }}\",\"name\":\"{{ dt_mz_name }}\""
     -
       name: "create new dashboard"
       uri:
