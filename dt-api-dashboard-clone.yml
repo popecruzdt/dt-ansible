@@ -48,8 +48,8 @@
       name: "replace dashboard name with dt_dashboard_name in json"
       replace:
         path: /tmp/dt_dashboard_clone.json
-        regexp: "(\"name\":\"[^\"]+\")"
-        replace: "\"name\":\"{{ dt_dashboard_name }}\""
+        regexp: "\"dashboardMetadata\":{(\"name\":\"[^\"]+\")"
+        replace: "\"dashboardMetadata\":{\"name\":\"{{ dt_dashboard_name }}\""
     -
       name: "replace management zone with dt_mz_64id in json"
       replace:
