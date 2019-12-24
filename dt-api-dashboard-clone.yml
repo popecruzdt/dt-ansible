@@ -5,6 +5,7 @@
 # dt_dashboard_name -> name to assign dynatrace dashboard
 # dt_dashboard_uuid -> unique UUID id to assign dynatrace dashboard
 # dt_clone_uuid -> unique UUID id of the dynatrace dashboard to clone
+# dt_mz_64id -> unique 64 bit integer id of dynatrace management zone
 # dt_app_id -> unique id of the dynatrace web application (for application tiles)
 ---
 -
@@ -48,21 +49,18 @@
         path: /tmp/dt_dashboard_clone.json
         regexp: "(\"name\":\"[^\"]+\")"
         replace: "\"name\":\"{{ dt_dashboard_name }}\""
-#    -
-#      name: validate dashboard payload
-#      uri:
-#        url: "{{ dt_config_api_endpoint }}dashboards/validator?Api-Token={{ dt_api_token }}"
-#        method: POST
-#        remote_src: /tmp/dt_dashboard_clone.json
-#        status_code: 204
-#        return_content: yes
-#      register: new_dashboard
-#    -
-#      name: create new dashboard
-#      uri:
-#        url: "{{ dt_config_api_endpoint }}dashboards/{{ dt_dashboard_uuid }}?Api-Token={{ dt_api_token }}"
-#        method: PUT
-#        src: /tmp/dt_dashboard_clone.json
-#        status_code: 201
-#        return_content: yes
-#      register: new_dashboard
+    -
+      name: "replace management zone with dt_mz_64id in json"
+      replace:
+        path: /tmp/dt_dashboard_clone.json
+        regexp: "(\"managementZone\":null)"
+        replace: "\"managementZone\":{{ dt_mz_64id }}"
+    -
+      name: "create new dashboard"
+      uri:
+        url: "{{ dt_config_api_endpoint }}dashboards/{{ dt_dashboard_uuid }}?Api-Token={{ dt_api_token }}"
+        method: PUT
+        src: /tmp/dt_dashboard_clone.json
+        status_code: 201
+        return_content: yes
+      register: new_dashboard
