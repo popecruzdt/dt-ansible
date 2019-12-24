@@ -50,12 +50,12 @@
         path: /tmp/dt_dashboard_clone.json
         regexp: "\"dashboardMetadata\":{(\"name\":\"[^\"]+\")"
         replace: "\"dashboardMetadata\":{\"name\":\"{{ dt_dashboard_name }}\""
-#    -
-#      name: "replace management zone with dt_mz_64id in json"
-#      replace:
-#        path: /tmp/dt_dashboard_clone.json
-#        regexp: "\"dashboardFilter\":{\"timeframe\":\"\",\"managementZone\":null}"
-#        replace: "\"dashboardFilter\":{\"timeframe\":\"\",\"managementZone\":{\"id\":\"{{ dt_mz_64id }}\",\"name\":\"{{ dt_mz_name }}\"}"
+    -
+      name: "replace management zone with dt_mz_64id in json"
+      replace:
+        path: /tmp/dt_dashboard_clone.json
+        regexp: "\"dashboardFilter\":{\"timeframe\":\"\",\"managementZone\":null}"
+        replace: "\"dashboardFilter\":{\"timeframe\":\"\",\"managementZone\":{\"id\":\"{{ dt_mz_64id }}\",\"name\":\"{{ dt_mz_name }}\"}}"
     -
       name: "create new dashboard"
       uri:
