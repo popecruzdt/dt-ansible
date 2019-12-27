@@ -28,7 +28,7 @@
         return_content: yes
         status_code: 200
       register: existing_ap
-      failed_when: 'dt_notification_uuid|string not in existing_ap.content'
+      failed_when: 'dt_ap_uuid|string not in existing_ap.content'
     -
       name: validate notification rule payload
       uri:
