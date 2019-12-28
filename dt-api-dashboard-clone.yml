@@ -8,6 +8,7 @@
 # dt_mz_64id -> unique 64 bit integer id of dynatrace management zone
 # dt_mz_name -> name of dynatrace management zone
 # dt_app_id -> unique id of the dynatrace web application (for application tiles)
+# dt_owner_id -> user account to assign dashboard ownership
 ---
 -
   hosts: "{{ host_name }}"
@@ -18,13 +19,7 @@
       set_fact:
         dt_dashboard_uuid: "{{ 9999999999999999999999 | random | to_uuid }}"
     -
-      name: output 1
-      debug: msg={{ dt_dashboard_uuid }}
-    -
-      name: output 2
-      debug: msg={{ dt_dashboard_uuid }}
-    -
-      name: validate dashboard UUID is available
+      name: "validate dashboard UUID is available"
       uri:
         url: "{{ dt_config_api_endpoint }}dashboards?Api-Token={{ dt_api_token }}"
         method: GET
@@ -33,7 +28,7 @@
       register: existing_dashboards
       failed_when: 'dt_dashboard_uuid|string in existing_dashboards.content'
     -
-      name: validate dashboard to clone UUID exists
+      name: "validate dashboard to clone UUID exists"
       uri:
         url: "{{ dt_config_api_endpoint }}dashboards?Api-Token={{ dt_api_token }}"
         method: GET
@@ -72,9 +67,14 @@
         path: /tmp/dt_dashboard_clone.json
         regexp: "\"APPLICATION-[^\"]+\""
         replace: "\"{{ dt_app_id }}\""
-
     -
-      name: "create new dashboard"
+      name: "replace dashboard owner with dt_owner_id in json"
+      replace:
+        path: /tmp/dt_dashboard_clone.json
+        regexp: "\"owner\":\"[^\"]+\""
+        replace: "\"owner\":\"{{ dt_owner_id }}\""
+    -
+      name: "create new dashboard with modified json"
       uri:
         url: "{{ dt_config_api_endpoint }}dashboards/{{ dt_dashboard_uuid }}?Api-Token={{ dt_api_token }}"
         method: PUT
