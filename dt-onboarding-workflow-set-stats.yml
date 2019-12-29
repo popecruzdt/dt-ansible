@@ -1,0 +1,24 @@
+# Generate dynamic variables for onboarding workflow
+---
+-
+  hosts: localhost
+  name: "Onboarding Workflow Set Stats"
+  tasks:
+    -
+      name: "generate web application detection rule uuid"
+      set_stats:
+        data:
+          dt_detection_rule_uuid: "{{ 9999999999999999999999 | random | to_uuid }}" # generates a random number and converts to UUID
+      when: dt_detection_rule_uuid is undefined
+    -
+      name: "generate management zone 64 bit integer id"
+      set_stats:
+        data:
+          dt_mz_64id: "{{ 999999999999999999 | random(100000000000000000, 10) }}" # Generate a random 64 bit integer
+      when: dt_mz_64id is undefined
+    -
+      name: "generate alerting profile uuid"
+      set_stats:
+        data:
+          dt_ap_uuid: "{{ 9999999999999999999999 | random | to_uuid }}" # generates a random number and converts to UUID
+      when: dt_ap_uuid is undefined
