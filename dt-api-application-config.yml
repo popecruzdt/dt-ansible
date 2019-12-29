@@ -371,4 +371,4 @@
       set_stats:
         data:
           dt_web_application_id: "{{ dt_new_web_application_id }}"
-      when: dt_new_web_application_id is undefined
+      when: dt_new_web_application_id is defined
