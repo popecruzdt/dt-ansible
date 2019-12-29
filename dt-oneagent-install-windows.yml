@@ -34,6 +34,13 @@
         state: present
       when: installed.exists == False
     -
+      name: "update: uninstall existing oneagent package"
+      win_package:
+        path: C:\Temp\dynatrace-oneagent-windows-latest.exe
+        product_id: '{8A7BA1CF-2285-474C-9E28-0DAFEA1E66B4}'
+        state: absent
+      when: installed.exists == True
+    -
       name: "update: execute oneagent install file"
       win_package:
         path: C:\Temp\dynatrace-oneagent-windows-latest.exe
