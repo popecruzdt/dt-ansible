@@ -22,3 +22,15 @@
         data:
           dt_ap_uuid: "{{ 9999999999999999999999 | random | to_uuid }}" # generates a random number and converts to UUID
       when: dt_ap_uuid is undefined
+    -
+      name: "generate problem notification uuid"
+      set_stats:
+        data:
+          dt_notification_uuid: '{{ 9999999999999999999999 | random | to_uuid }}' # generates a random number and converts to UUID
+      when: dt_notification_uuid is undefined
+    -
+      name: "generate dashboard uuid"
+      set_stats:
+        data:
+          dt_dashboard_uuid: '{{ 9999999999999999999999 | random | to_uuid }}' # generates a random number and converts to UUID
+      when: dt_dashboard_uuid is undefined
