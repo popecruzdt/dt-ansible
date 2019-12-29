@@ -21,9 +21,9 @@
       win_get_url:
         url: "{{ dt_api_endpoint }}deployment/installer/agent/windows/default/latest?Api-Token={{ dt_install_token }}&arch=x86&flavor=default"
         dest: C:\Temp\dynatrace-oneagent-windows-latest.exe
-      when: installed.exists == False
+      #when: installed.exists == False
     -
-      name: "execute oneagent install file"
+      name: "install: execute oneagent install file"
       win_package:
         path: C:\Temp\dynatrace-oneagent-windows-latest.exe
         product_id: '{8A7BA1CF-2285-474C-9E28-0DAFEA1E66B4}'
@@ -33,3 +33,14 @@
         - INFRA_ONLY="{{ dt_infra_only }}"
         state: present
       when: installed.exists == False
+    -
+      name: "update: execute oneagent install file"
+      win_package:
+        path: C:\Temp\dynatrace-oneagent-windows-latest.exe
+        product_id: '{8A7BA1CF-2285-474C-9E28-0DAFEA1E66B4}'
+        arguments:
+        - HOST_GROUP="{{ dt_host_group }}"
+        - APP_LOG_CONTENT_ACCESS="{{ dt_app_log_content_access }}"
+        - INFRA_ONLY="{{ dt_infra_only }}"
+        state: present
+      when: installed.exists == True
