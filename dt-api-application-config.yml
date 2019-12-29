@@ -333,16 +333,15 @@
         new_web_application_json: "{{ new_web_application.content | from_json }}"
     -
       name: "obtain web application id from json object"
-      set_stats:
-        data:
-          dt_web_application_id: "{{ new_web_application_json.id }}"
+      set_fact:
+          dt_new_web_application_id: "{{ new_web_application_json.id }}"
     -
       name: "validate application detection rule payload"
       uri:
         url: "{{ dt_config_api_endpoint }}applicationDetectionRules/validator?Api-Token={{ dt_api_token }}"
         method: POST
         body:
-          applicationIdentifier: "{{ dt_web_application_id }}"
+          applicationIdentifier: "{{ dt_new_web_application_id }}"
           filterConfig:
             pattern: "{{ dt_url_pattern }}"
             applicationMatchType: CONTAINS
@@ -358,7 +357,7 @@
         method: PUT
         body:
           id: "{{ dt_detection_rule_uuid }}"
-          applicationIdentifier: "{{ dt_web_application_id }}"
+          applicationIdentifier: "{{ dt_new_web_application_id }}"
           filterConfig:
             pattern: "{{ dt_url_pattern }}"
             applicationMatchType: CONTAINS
@@ -367,3 +366,9 @@
         status_code: 201
         return_content: yes
       register: new_detection_rule
+    -
+      name: "set web application id artifact"
+      set_stats:
+        data:
+          dt_web_application_id: "{{ dt_new_web_application_id }}"
+      when: dt_new_web_application_id is undefined
