@@ -38,6 +38,7 @@
       win_package:
         path: C:\Temp\dynatrace-oneagent-windows-latest.exe
         product_id: '{8A7BA1CF-2285-474C-9E28-0DAFEA1E66B4}'
+        arguments: /S
         state: absent
       when: installed.exists == True
     -
