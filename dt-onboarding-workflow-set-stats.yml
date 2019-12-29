@@ -1,4 +1,7 @@
 # Generate dynamic variables for onboarding workflow
+# application_name -> application name to be used for host_group, web application, management zone, alerting profile, notification, and dashboard
+# application_url_pattern -> URL pattern for web application detection rule
+# application_owner_email -> email address of application owner
 ---
 -
   hosts: localhost
@@ -34,3 +37,51 @@
         data:
           dt_dashboard_uuid: '{{ 9999999999999999999999 | random | to_uuid }}' # generates a random number and converts to UUID
       when: dt_dashboard_uuid is undefined
+    -
+      name: "set dynatrace host group"
+      set_stats:
+        data:
+          dt_host_group: "{{ application_name }}"
+      when: application_name is defined && dt_host_group is undefined
+    -
+      name: "set management zone name"
+      set_stats:
+        data:
+          dt_mz_name: "{{ application_name }}"
+      when: application_name is defined && dt_mz_name is undefined
+    -
+      name: "set web application name"
+      set_stats:
+        data:
+          dt_web_application_name: "{{ application_name }}"
+      when: application_name is defined && dt_web_application_name is undefined
+    -
+      name: "set dashboard name"
+      set_stats:
+        data:
+          dt_dashboard_name: "{{ application_name }} application overview"
+      when: application_name is defined && dt_dashboard_name is undefined
+    -
+      name: "set problem notification name"
+      set_stats:
+        data:
+          dt_notification_name: "{{ application_name }}"
+      when: application_name is defined && dt_notification_name is undefined
+    -
+      name: "set web application url pattern"
+      set_stats:
+        data:
+          dt_url_pattern: "{{ application_url_pattern }}"
+      when: application_url_pattern is defined && dt_url_pattern is undefined
+    -
+      name: "set notification email recipient"
+      set_stats:
+        data:
+          dt_email_receiver: "{{ application_owner_email }}"
+      when: application_owner_email is defined && dt_email_receiver is undefined
+    -
+      name: "set dashboard owner"
+      set_stats:
+        data:
+          dt_owner_id: "{{ application_owner_email }}"
+      when: application_owner_email is defined && dt_owner_id is undefined
