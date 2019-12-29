@@ -11,7 +11,7 @@
   name: "create dynatrace web application and detection rule"
   tasks:
     -
-      name: validate application detection rule uuid is available
+      name: "validate application detection rule uuid is available"
       uri:
         url: "{{ dt_config_api_endpoint }}applicationDetectionRules?Api-Token={{ dt_api_token }}"
         method: GET
@@ -20,7 +20,7 @@
       register: existing_rules
       failed_when: 'dt_detection_rule_uuid|string in existing_rules.content'
     -
-      name: validate web application config payload
+      name: "validate web application config payload"
       uri:
         url: "{{ dt_config_api_endpoint }}applications/web/validator?Api-Token={{ dt_api_token }}"
         method: POST
@@ -174,7 +174,7 @@
         return_content: yes
       register: new_web_application
     -
-      name: create web application config
+      name: "create web application config"
       uri:
         url: "{{ dt_config_api_endpoint }}applications/web?Api-Token={{ dt_api_token }}"
         method: POST
@@ -328,15 +328,17 @@
         return_content: yes
       register: new_web_application
     -
-      name: convert response to json object
+      name: "convert response to json object"
       set_fact:
         new_web_application_json: "{{ new_web_application.content | from_json }}"
     -
-      name: obtain web application id from json object
-      set_fact:
-        dt_web_application_id: "{{ new_web_application_json.id }}"
+      name: "obtain web application id from json object"
+      set_stats:
+        data:
+          dt_web_application_id: "{{ new_web_application_json.id }}"
+      when: new_web_application_json.id is defined
     -
-      name: validate application detection rule payload
+      name: "validate application detection rule payload"
       uri:
         url: "{{ dt_config_api_endpoint }}applicationDetectionRules/validator?Api-Token={{ dt_api_token }}"
         method: POST
@@ -351,7 +353,7 @@
         return_content: yes
       register: new_detection_rule
     -
-      name: create application detection rule
+      name: "create application detection rule"
       uri:
         url: "{{ dt_config_api_endpoint }}applicationDetectionRules/{{ dt_detection_rule_uuid }}?Api-Token={{ dt_api_token }}"
         method: PUT
