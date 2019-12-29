@@ -13,8 +13,10 @@
     -
       name: "check if oneagent is already installed"
       win_reg_stat:
-        path: HKLM:\SYSTEM\CurrentControlSet\Services\Dynatrace OneAgent
-        name: ImagePath
+        #path: HKLM:\SYSTEM\CurrentControlSet\Services\Dynatrace OneAgent
+        path: HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\{158D01AC-3A0A-49A3-BF3A-566F6365EDE7}
+        #name: ImagePath
+        name: DisplayName
       register: installed
     -
       name: "download oneagent install file via https"
