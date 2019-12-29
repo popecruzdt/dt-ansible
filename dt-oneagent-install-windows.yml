@@ -11,11 +11,9 @@
   name: "dynatrace oneagent install on windows"
   tasks:
     -
-      name: "check if oneagent is already installed"
+      name: "check if oneagent is already installed via windows registry product id"
       win_reg_stat:
-        #path: HKLM:\SYSTEM\CurrentControlSet\Services\Dynatrace OneAgent
         path: HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\{158D01AC-3A0A-49A3-BF3A-566F6365EDE7}
-        #name: ImagePath
         name: DisplayName
       register: installed
     -
@@ -23,12 +21,10 @@
       win_get_url:
         url: "{{ dt_api_endpoint }}deployment/installer/agent/windows/default/latest?Api-Token={{ dt_install_token }}&arch=x86&flavor=default"
         dest: C:\Temp\dynatrace-oneagent-windows-latest.exe
-      #when: installed.exists == False
     -
       name: "install: execute oneagent install file"
       win_package:
         path: C:\Temp\dynatrace-oneagent-windows-latest.exe
-        #product_id: '{8A7BA1CF-2285-474C-9E28-0DAFEA1E66B4}'
         product_id: '{158D01AC-3A0A-49A3-BF3A-566F6365EDE7}'
         arguments:
         - HOST_GROUP="{{ dt_host_group }}"
@@ -39,17 +35,13 @@
     -
       name: "update: uninstall existing oneagent package"
       win_package:
-        #path: C:\Temp\dynatrace-oneagent-windows-latest.exe
-        #product_id: '{8A7BA1CF-2285-474C-9E28-0DAFEA1E66B4}'
         product_id: '{158D01AC-3A0A-49A3-BF3A-566F6365EDE7}'
-        #arguments: '/quiet /uninstall'
         state: absent
       when: installed.exists == True
     -
       name: "update: execute oneagent install file"
       win_package:
         path: C:\Temp\dynatrace-oneagent-windows-latest.exe
-        #product_id: '{8A7BA1CF-2285-474C-9E28-0DAFEA1E66B4}'
         product_id: '{158D01AC-3A0A-49A3-BF3A-566F6365EDE7}'
         arguments:
         - HOST_GROUP="{{ dt_host_group }}"
