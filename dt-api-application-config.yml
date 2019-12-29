@@ -336,7 +336,6 @@
       set_stats:
         data:
           dt_web_application_id: "{{ new_web_application_json.id }}"
-      when: new_web_application_json.id is defined
     -
       name: "validate application detection rule payload"
       uri:
