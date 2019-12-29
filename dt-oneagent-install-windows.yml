@@ -40,7 +40,7 @@
         path: C:\Temp\dynatrace-oneagent-windows-latest.exe
         #product_id: '{8A7BA1CF-2285-474C-9E28-0DAFEA1E66B4}'
         product_id: '{158D01AC-3A0A-49A3-BF3A-566F6365EDE7}'
-        arguments: /quiet
+        arguments: '/quiet /uninstall'
         state: absent
       when: installed.exists == True
     -
