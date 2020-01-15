@@ -105,3 +105,7 @@
         from: "{{ dt_email_receiver }}"
         subject: "{{ dt_mz_name }} Ansible Tower Dynatrace Application Onboarding Dashboard"
         body: "Application {{ dt_mz_name }} has been successfully onboarded.  View your application dashboard using this URL: {{ dt_base_url }}#dashboard;id={{ dt_dashboard_uuid }};"
+    -
+      name: "output dashboard uuid"
+      debug:
+        msg: "{{ dt_dashboard_uuid }}"
