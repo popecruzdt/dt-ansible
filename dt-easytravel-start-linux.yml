@@ -1,0 +1,17 @@
+# start or restart easytravel docker on linux
+# hosts_group -> inventory group of hosts to execute playbook on
+---
+-
+  hosts: "{{ hosts_group }}"
+  name: "start (or restart) easytravel docker on linux"
+  tasks:
+    - name: "stop easytravel docker containers"
+      docker_compose:
+        project_src: "/opt/easyTravel-Docker"
+        state: absent
+      become: yes
+    - name: "start easytravel docker containers"
+      docker_compose:
+        project_src: "/opt/easyTravel-Docker"
+        state: present
+      become: yes
