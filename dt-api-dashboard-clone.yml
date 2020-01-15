@@ -15,8 +15,6 @@
 # smtp_password -> mail server password
 # dt_email_receiver -> email recipient address
 # dt_base_url -> dynatrace environment/tenant base url
-
-# dt_dashboard_uuid -> unique UUID id of dynatrace dashboard
 ---
 -
   hosts: "{{ host_name }}"
