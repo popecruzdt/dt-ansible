@@ -7,7 +7,7 @@
   tasks:
     - name: "stop easytravel docker containers"
       shell:
-        cmd: docker-compose down
+        cmd: /usr/local/bin/docker-compose down
         chdir: /opt/easyTravel-Docker
       become: yes
     - name: "start easytravel docker containers"
