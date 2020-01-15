@@ -11,6 +11,11 @@
   name: "dynatrace oneagent install on linux"
   tasks:
     -
+      name: "validate ansible tower execution on linux with sudo access"
+      shell:
+        cmd: ls /opt
+      become: yes
+    -
       name: "check if oneagent is already installed"
       stat:
         path: /opt/dynatrace/oneagent/agent/lib64/liboneagentos.so

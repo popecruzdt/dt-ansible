@@ -11,6 +11,11 @@
   name: "dynatrace oneagent install on windows"
   tasks:
     -
+      name: "validate ansible tower execution on windows"
+      win_stat:
+        path: C:\Temp
+      register: temp_dir
+    -
       name: "check if oneagent is already installed via windows registry product id"
       win_reg_stat:
         path: HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\{158D01AC-3A0A-49A3-BF3A-566F6365EDE7}
