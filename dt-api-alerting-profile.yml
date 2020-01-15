@@ -186,8 +186,8 @@
     -
       name: "output alerting profile uuid"
       debug:
-        msg: {{ dt_new_ap_uuid }}
+        msg: "{{ dt_new_ap_uuid }}"
     -
       name: "output notification uuid"
       debug:
-        msg: {{ dt_new_notification_uuid }}
+        msg: "{{ dt_new_notification_uuid }}"
