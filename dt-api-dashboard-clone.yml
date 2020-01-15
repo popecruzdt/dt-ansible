@@ -7,7 +7,7 @@
 # dt_clone_uuid -> unique UUID id of the dynatrace dashboard to clone
 # dt_mz_64id -> unique 64 bit integer id of dynatrace management zone
 # dt_mz_name -> name of dynatrace management zone
-# dt_web_application_id -> unique id of the dynatrace web application (for application tiles)
+# dt_app_id -> unique id of the dynatrace web application (for application tiles)
 # dt_owner_id -> user account to assign dashboard ownership
 ---
 -
@@ -67,7 +67,7 @@
       replace:
         path: /tmp/dt_dashboard_clone.json
         regexp: "\"APPLICATION-[^\"]+\""
-        replace: "\"{{ dt_web_application_id }}\""
+        replace: "\"{{ dt_app_id }}\""
     -
       name: "replace dashboard owner with dt_owner_id in json"
       replace:
