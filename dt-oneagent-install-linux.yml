@@ -1,7 +1,7 @@
 # dynatrace oneagent install on linux
 # hosts_group -> inventory group of hosts to execute playbook on
 # dt_api_endpoint -> dynatrace environment api endpoint (include trailing /)
-# dt_install_token -> dynatrace api install token
+# dt_api_token -> dynatrace api install token
 # dt_host_group -> dynatrace host group name
 # dt_app_log_content_access -> flag to enable or disable log analytics on host (0 or 1)
 # dt_infra_only -> flag to set cloud infrastructure monitoring mode on host (0 or 1)
@@ -18,7 +18,7 @@
     -
       name: "download oneagent install file via https"
       get_url:
-        url: "{{ dt_api_endpoint }}deployment/installer/agent/unix/default/latest?Api-Token={{ dt_install_token }}&arch=x86&flavor=default"
+        url: "{{ dt_api_endpoint }}deployment/installer/agent/unix/default/latest?Api-Token={{ dt_api_token }}&arch=x86&flavor=default"
         dest: /tmp/dynatrace-oneagent-linux-latest.sh
         mode: '0777'
     -
