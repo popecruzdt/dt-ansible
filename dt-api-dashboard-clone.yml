@@ -9,6 +9,14 @@
 # dt_mz_name -> name of dynatrace management zone
 # dt_app_id -> unique id of the dynatrace web application (for application tiles)
 # dt_owner_id -> user account to assign dashboard ownership
+# smtp_host -> mail server smtp hosts
+# smtp_port -> mail server smtp smtp
+# smtp_username -> mail server username
+# smtp_password -> mail server password
+# dt_email_receiver -> email recipient address
+# dt_base_url -> dynatrace environment/tenant base url
+
+# dt_dashboard_uuid -> unique UUID id of dynatrace dashboard
 ---
 -
   hosts: "{{ host_name }}"
@@ -86,3 +94,14 @@
         status_code: 201
         return_content: yes
       register: new_dashboard
+    -
+      name: "send email with dashboard link"
+      mail:
+        host: "{{ smtp_host }}"
+        port: "{{ smtp_port }}"
+        username: "{{ smtp_username }}"
+        password: "{{ smtp_password }}"
+        to: "{{ dt_email_receiver }}"
+        from: "{{ dt_email_receiver }}"
+        subject: "{{ dt_mz_name }} Ansible Tower Dynatrace Application Onboarding Dashboard"
+        body: "Application {{ dt_mz_name }} has been successfully onboarded.  View your application dashboard using this URL: {{ dt_base_url }}#dashboard;id={{ dt_dashboard_uuid }};"
