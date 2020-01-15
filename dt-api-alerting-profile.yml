@@ -5,13 +5,16 @@
 # dt_mz_name -> name of existing dynatrace management zone (used to name alerting profile)
 # dt_mz_64id -> unique 64 bit integer id of existing management zone
 # dt_ap_uuid -> unique UUID to assign new alerting profile
+# dt_notification_name -> name to assign dynatrace email notification
+# dt_notification_uuid -> unique UUID id to assign dynatrace email notification
+# dt_email_receiver -> email address for to: recipients
 ---
 -
   hosts: "{{ host_name }}"
   name: "create dynatrace alerting profile with management zone"
   tasks:
     -
-      name: validate alerting profile uuid is available
+      name: "validate alerting profile uuid is available"
       uri:
         url: "{{ dt_config_api_endpoint }}alertingProfiles?Api-Token={{ dt_api_token }}"
         method: GET
@@ -20,7 +23,16 @@
       register: existing_ap
       failed_when: 'dt_ap_uuid|string in existing_ap.content'
     -
-      name: validate management zone 64 bit id exists
+      name: "validate notification UUID is available"
+      uri:
+        url: "{{ dt_config_api_endpoint }}notifications?Api-Token={{ dt_api_token }}"
+        method: GET
+        return_content: yes
+        status_code: 200
+      register: existing_notifications
+      failed_when: 'dt_notification_uuid|string in existing_notifications.content'
+    -
+      name: "validate management zone 64 bit id exists"
       uri:
         url: "{{ dt_config_api_endpoint }}managementZones?Api-Token={{ dt_api_token }}"
         method: GET
@@ -29,7 +41,7 @@
       register: existing_mz
       failed_when: 'dt_mz_64id|string not in existing_mz.content'
     -
-      name: validate alerting profile payload
+      name: "validate alerting profile payload"
       uri:
         url: "{{ dt_config_api_endpoint }}alertingProfiles/validator?Api-Token={{ dt_api_token }}"
         method: POST
@@ -67,7 +79,7 @@
         return_content: yes
       register: new_mz
     -
-      name: create alerting profile
+      name: "create alerting profile"
       uri:
         url: "{{ dt_config_api_endpoint }}alertingProfiles/{{ dt_ap_uuid }}?Api-Token={{ dt_api_token }}"
         method: PUT
@@ -105,3 +117,53 @@
         status_code: 201
         return_content: yes
       register: new_mz
+    -
+      name: "validate alerting profile UUID exists"
+      uri:
+        url: "{{ dt_config_api_endpoint }}alertingProfiles?Api-Token={{ dt_api_token }}"
+        method: GET
+        return_content: yes
+        status_code: 200
+      register: existing_ap
+      failed_when: 'dt_ap_uuid|string not in existing_ap.content'
+    -
+      name: "validate notification rule payload"
+      uri:
+        url: "{{ dt_config_api_endpoint }}notifications/validator?Api-Token={{ dt_api_token }}"
+        method: POST
+        body:
+          type: EMAIL
+          name: "{{ dt_notification_name }}"
+          alertingProfile: "{{ dt_ap_uuid }}"
+          active: true
+          subject: "{State} Problem {ProblemID}: {ImpactedEntity}"
+          body: "{ProblemDetailsHTML}"
+          receivers:
+          - "{{ dt_email_receiver }}"
+          ccReceivers: []
+          shouldSendForResolvedProblems: true
+        body_format: json
+        status_code: 204
+        return_content: yes
+      register: new_notification
+    -
+      name: "create notification rule"
+      uri:
+        url: "{{ dt_config_api_endpoint }}notifications/{{ dt_notification_uuid }}?Api-Token={{ dt_api_token }}"
+        method: PUT
+        body:
+          id: "{{ dt_notification_uuid }}"
+          type: EMAIL
+          name: "{{ dt_notification_name }}"
+          alertingProfile: "{{ dt_ap_uuid }}"
+          active: true
+          subject: "{State} Problem {ProblemID}: {ImpactedEntity}"
+          body: "{ProblemDetailsHTML}"
+          receivers:
+          - "{{ dt_email_receiver }}"
+          ccReceivers: []
+          shouldSendForResolvedProblems: true
+        body_format: json
+        status_code: 201
+        return_content: yes
+      register: new_notification
