@@ -8,10 +8,10 @@
     - name: "stop easytravel docker containers"
       shell:
         cmd: /usr/local/bin/docker-compose down
-        chdir: /opt/easyTravel-Docker
+        chdir: /opt/easyTravel-Docker/
       become: yes
     - name: "start easytravel docker containers"
       shell:
-        cmd: docker-compose up -d
-        chdir: /opt/easyTravel-Docker
+        cmd: /usr/local/bin/docker-compose up -d
+        chdir: /opt/easyTravel-Docker/
       become: yes
