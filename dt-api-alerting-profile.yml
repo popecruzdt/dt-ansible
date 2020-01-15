@@ -142,7 +142,7 @@
         body:
           type: EMAIL
           name: "{{ dt_notification_name }}"
-          alertingProfile: "{{ dt_ap_uuid }}"
+          alertingProfile: "{{ dt_new_ap_uuid }}"
           active: true
           subject: "{State} Problem {ProblemID}: {ImpactedEntity}"
           body: "{ProblemDetailsHTML}"
