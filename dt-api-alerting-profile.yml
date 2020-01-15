@@ -77,7 +77,7 @@
         body_format: json
         status_code: 204
         return_content: yes
-      register: new_mz
+      register: new_ap
     -
       name: "create alerting profile"
       uri:
@@ -116,16 +116,24 @@
         body_format: json
         status_code: 201
         return_content: yes
-      register: new_mz
+      register: new_ap
     -
-      name: "validate alerting profile UUID exists"
+      name: "convert response to json object"
+      set_fact:
+        new_ap_json: "{{ new_ap.content | from_json }}"
+    -
+      name: "obtain ap uuid from json object"
+      set_fact:
+        dt_new_ap_uuid: "{{ new_ap_json.id }}"
+    -
+      name: "validate alerting profile uuid exists"
       uri:
         url: "{{ dt_config_api_endpoint }}alertingProfiles?Api-Token={{ dt_api_token }}"
         method: GET
         return_content: yes
         status_code: 200
       register: existing_ap
-      failed_when: 'dt_ap_uuid|string not in existing_ap.content'
+      failed_when: 'dt_new_ap_uuid|string not in existing_ap.content'
     -
       name: "validate notification rule payload"
       uri:
