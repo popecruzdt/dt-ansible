@@ -6,12 +6,12 @@
   name: "start (or restart) easytravel docker on linux"
   tasks:
     - name: "stop easytravel docker containers"
-      docker_compose:
-        project_src: "/opt/easyTravel-Docker"
-        state: absent
+      shell:
+        cmd: docker-compose down
+        chdir: /opt/easyTravel-Docker
       become: yes
     - name: "start easytravel docker containers"
-      docker_compose:
-        project_src: "/opt/easyTravel-Docker"
-        state: present
+      shell:
+        cmd: docker-compose up -d
+        chdir: /opt/easyTravel-Docker
       become: yes
