@@ -175,3 +175,19 @@
         status_code: 201
         return_content: yes
       register: new_notification
+    -
+      name: "convert response to json object"
+      set_fact:
+        new_notification_json: "{{ new_notification.content | from_json }}"
+    -
+      name: "obtain notification uuid from json object"
+      set_fact:
+        dt_new_notification_uuid: "{{ new_notification_json.id }}"
+    -
+      name: "output alerting profile uuid"
+      debug:
+        msg: {{ dt_new_ap_uuid }}
+    -
+      name: "output notification uuid"
+      debug:
+        msg: {{ dt_new_notification_uuid }}
