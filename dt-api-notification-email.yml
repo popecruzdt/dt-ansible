@@ -1,3 +1,4 @@
+# deprecated - added functionality to 'dt-api-alerting-profile.yml'
 # create dynatrace notification email with alerting profile
 # host_name -> target host to execute playbook
 # dt_config_api_endpoint -> dynatrace configuration api endpoint (include trailing /)
