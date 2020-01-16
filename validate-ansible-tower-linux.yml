@@ -1,3 +1,4 @@
+# deprecated - added functionality to 'dt-oneagent-install-linux.yml'
 # validate ansible tower execution on linux
 # hosts_group -> inventory group of hosts to execute playbook on
 ---
