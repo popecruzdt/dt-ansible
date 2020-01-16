@@ -1,3 +1,4 @@
+# deprecated - added functionality to 'dt-oneagent-install-windows.yml'
 # validate ansible tower execution on windows
 # hosts_group -> inventory group of hosts to execute playbook on
 ---
