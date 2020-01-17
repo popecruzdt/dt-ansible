@@ -7,7 +7,7 @@
 # dt_clone_uuid -> unique UUID id of the dynatrace dashboard to clone
 # dt_mz_64id -> unique 64 bit integer id of dynatrace management zone
 # dt_mz_name -> name of dynatrace management zone
-# dt_app_id -> unique id of the dynatrace web application (for application tiles)
+# dt_web_application_id -> unique id of the dynatrace web application (for application tiles)
 # dt_owner_id -> user account to assign dashboard ownership
 # smtp_host -> mail server smtp hosts
 # smtp_port -> mail server smtp smtp
@@ -69,11 +69,11 @@
         regexp: "\"dashboardFilter\":{\"timeframe\":\"\",\"managementZone\":null}"
         replace: "\"dashboardFilter\":{\"timeframe\":\"\",\"managementZone\":{\"id\":\"{{ dt_mz_64id }}\",\"name\":\"{{ dt_mz_name }}\"}}"
     -
-      name: "replace web application id with dt_app_id in json"
+      name: "replace web application id with dt_web_application_id in json"
       replace:
         path: /tmp/dt_dashboard_clone.json
         regexp: "\"APPLICATION-[^\"]+\""
-        replace: "\"{{ dt_app_id }}\""
+        replace: "\"{{ dt_web_application_id }}\""
     -
       name: "replace dashboard owner with dt_owner_id in json"
       replace:
