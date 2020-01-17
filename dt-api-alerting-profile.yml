@@ -14,23 +14,15 @@
   name: "create dynatrace alerting profile with management zone"
   tasks:
     -
-      name: "validate alerting profile uuid is available"
-      uri:
-        url: "{{ dt_config_api_endpoint }}alertingProfiles?Api-Token={{ dt_api_token }}"
-        method: GET
-        return_content: yes
-        status_code: 200
-      register: existing_ap
-      failed_when: 'dt_ap_uuid|string in existing_ap.content'
+      name: "generate alerting profile uuid"
+      set_fact:
+        dt_ap_uuid: "{{ 9999999999999999999999 | random | to_uuid }}"
+      when: dt_ap_uuid is undefined
     -
-      name: "validate notification UUID is available"
-      uri:
-        url: "{{ dt_config_api_endpoint }}notifications?Api-Token={{ dt_api_token }}"
-        method: GET
-        return_content: yes
-        status_code: 200
-      register: existing_notifications
-      failed_when: 'dt_notification_uuid|string in existing_notifications.content'
+      name: "generate notification uuid"
+      set_fact:
+        dt_notification_uuid: "{{ 9999999999999999999999 | random | to_uuid }}"
+      when: dt_notification_uuid is undefined
     -
       name: "validate management zone 64 bit id exists"
       uri:
