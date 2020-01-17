@@ -21,7 +21,7 @@
         path: /opt/dynatrace/oneagent/agent/lib64/liboneagentos.so
       register: installed
     -
-      name: "download oneagent install file via https"
+      name: "download oneagent install file"
       get_url:
         url: "{{ dt_api_endpoint }}deployment/installer/agent/unix/default/latest?Api-Token={{ dt_api_token }}&arch=x86&flavor=default"
         dest: /tmp/dynatrace-oneagent-linux-latest.sh

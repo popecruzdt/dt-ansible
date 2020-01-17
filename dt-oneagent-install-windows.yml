@@ -22,7 +22,7 @@
         name: DisplayName
       register: installed
     -
-      name: "download oneagent install file via https"
+      name: "download oneagent install file"
       win_get_url:
         url: "{{ dt_api_endpoint }}deployment/installer/agent/windows/default/latest?Api-Token={{ dt_api_token }}&arch=x86&flavor=default"
         dest: C:\Temp\dynatrace-oneagent-windows-latest.exe
