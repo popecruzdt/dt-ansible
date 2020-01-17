@@ -140,3 +140,7 @@
         status_code: 201
         return_content: yes
       register: new_mz
+    -
+      name: "output management zone id"
+      debug:
+        msg: "{{ dt_mz_64id }}"

@@ -372,3 +372,7 @@
         data:
           dt_web_application_id: "{{ dt_new_web_application_id }}"
       when: dt_new_web_application_id is defined
+    -
+      name: "output web application id"
+      debug:
+        msg: "{{ dt_new_web_application_id }}"
