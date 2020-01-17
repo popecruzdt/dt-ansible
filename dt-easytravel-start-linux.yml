@@ -5,12 +5,12 @@
   hosts: "{{ hosts_group }}"
   name: "start (or restart) easytravel docker on linux"
   tasks:
-    - name: "stop easytravel docker containers"
+    - name: "stop easytravel docker containers with command"
       shell:
         cmd: /usr/local/bin/docker-compose down
         chdir: /opt/easyTravel-Docker/
       become: yes
-    - name: "start easytravel docker containers"
+    - name: "start easytravel docker containers with command"
       shell:
         cmd: /usr/local/bin/docker-compose up -d
         chdir: /opt/easyTravel-Docker/
