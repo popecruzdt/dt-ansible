@@ -21,12 +21,12 @@
   name: "clone existing dynatrace dashboard (template)"
   tasks:
     -
-      name: "generate dashboard UUID"
+      name: "generate dashboard uuid"
       set_fact:
         dt_dashboard_uuid: "{{ 9999999999999999999999 | random | to_uuid }}"
       when: dt_dashboard_uuid is undefined
     -
-      name: "validate dashboard UUID is available"
+      name: "validate dashboard uuid is available"
       uri:
         url: "{{ dt_config_api_endpoint }}dashboards?Api-Token={{ dt_api_token }}"
         method: GET

@@ -16,6 +16,15 @@
         dt_mz_64id: "{{ 999999999999999999 | random(100000000000000000, 10) }}"
       when: dt_mz_64id is undefined
     -
+      name: "validate management zone 64 bit id is available"
+      uri:
+        url: "{{ dt_config_api_endpoint }}managementZones?Api-Token={{ dt_api_token }}"
+        method: GET
+        return_content: yes
+        status_code: 200
+      register: existing_mz
+      failed_when: 'dt_mz_64id|string in existing_mz.content'
+    -
       name: "validate management zone payload"
       uri:
         url: "{{ dt_config_api_endpoint }}managementZones/validator?Api-Token={{ dt_api_token }}"

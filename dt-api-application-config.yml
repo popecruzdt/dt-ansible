@@ -16,6 +16,15 @@
         dt_detection_rule_uuid: "{{ 9999999999999999999999 | random | to_uuid }}"
       when: dt_detection_rule_uuid is undefined
     -
+      name: "validate application detection rule uuid is available"
+      uri:
+        url: "{{ dt_config_api_endpoint }}applicationDetectionRules?Api-Token={{ dt_api_token }}"
+        method: GET
+        return_content: yes
+        status_code: 200
+      register: existing_rules
+      failed_when: 'dt_detection_rule_uuid|string in existing_rules.content'
+    -
       name: "validate web application config payload"
       uri:
         url: "{{ dt_config_api_endpoint }}applications/web/validator?Api-Token={{ dt_api_token }}"
