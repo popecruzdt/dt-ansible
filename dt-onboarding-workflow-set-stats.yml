@@ -1,10 +1,11 @@
 # Generate dynamic variables for onboarding workflow
+# host_name -> target host to execute playbook
 # application_name -> application name to be used for host_group, web application, management zone, alerting profile, notification, and dashboard
 # application_url_pattern -> URL pattern for web application detection rule
 # application_owner_email -> email address of application owner
 ---
 -
-  hosts: localhost
+  hosts: "{{ host_name }}"
   name: "Onboarding Workflow Set Stats"
   tasks:
     -
