@@ -28,10 +28,19 @@
         url: "{{ dt_api_endpoint }}deployment/installer/agent/windows/default/latest?Api-Token={{ dt_api_token }}&arch=x86&flavor=default"
         dest: C:\Temp\dynatrace-oneagent-windows-latest.exe
     -
+      name: "extract oneagent install msi file"
+      win_command: C:\Temp\dynatrace-oneagent-windows-latest.exe --unpack-msi "C:\Temp"
+        args: chdir C:\Temp
+    -
+      name: "identify oneagent install msi file"
+      win_command: dir /b Dynatrace-OneAgent-Windows-*msi
+        args: chdir C:\Temp
+      register: oneagent_msi
+    -
       name: "install: execute oneagent install file"
       win_package:
-        path: C:\Temp\dynatrace-oneagent-windows-latest.exe
-        product_id: '{9257BAF1-3E45-42F9-BBB5-48D5DDD98105}'
+        path: "C:\\Temp\\{{ oneagent_msi }}"
+        #product_id: '{9257BAF1-3E45-42F9-BBB5-48D5DDD98105}'
         arguments:
         - HOST_GROUP="{{ dt_host_group }}"
         - APP_LOG_CONTENT_ACCESS="{{ dt_app_log_content_access }}"
