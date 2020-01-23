@@ -31,36 +31,36 @@
       name: "extract oneagent install msi file"
       win_command: C:\Temp\dynatrace-oneagent-windows-latest.exe --unpack-msi C:\Temp
       args: chdir C:\Temp
-    -
-      name: "identify oneagent install msi file"
-      win_command: dir /b Dynatrace-OneAgent-Windows-*msi
-      args: chdir C:\Temp
-      register: oneagent_msi
-    -
-      name: "install: execute oneagent install file"
-      win_package:
-        path: "C:\\Temp\\{{ oneagent_msi }}"
+    #-
+      #name: "identify oneagent install msi file"
+      #win_command: dir /b Dynatrace-OneAgent-Windows-*msi
+      #args: chdir C:\Temp
+      #register: oneagent_msi
+    #-
+      #name: "install: execute oneagent install file"
+      #win_package:
+        #path: "C:\\Temp\\{{ oneagent_msi }}"
+        ##product_id: '{9257BAF1-3E45-42F9-BBB5-48D5DDD98105}'
+        #arguments:
+        #- HOST_GROUP="{{ dt_host_group }}"
+        #- APP_LOG_CONTENT_ACCESS="{{ dt_app_log_content_access }}"
+        #- INFRA_ONLY="{{ dt_infra_only }}"
+        #state: present
+      #when: installed.exists == False
+    #-
+      #name: "update: uninstall existing oneagent package"
+      #win_package:
         #product_id: '{9257BAF1-3E45-42F9-BBB5-48D5DDD98105}'
-        arguments:
-        - HOST_GROUP="{{ dt_host_group }}"
-        - APP_LOG_CONTENT_ACCESS="{{ dt_app_log_content_access }}"
-        - INFRA_ONLY="{{ dt_infra_only }}"
-        state: present
-      when: installed.exists == False
-    -
-      name: "update: uninstall existing oneagent package"
-      win_package:
-        product_id: '{9257BAF1-3E45-42F9-BBB5-48D5DDD98105}'
-        state: absent
-      when: installed.exists == True
-    -
-      name: "update: execute oneagent install file"
-      win_package:
-        path: C:\Temp\dynatrace-oneagent-windows-latest.exe
-        product_id: '{9257BAF1-3E45-42F9-BBB5-48D5DDD98105}'
-        arguments:
-        - HOST_GROUP="{{ dt_host_group }}"
-        - APP_LOG_CONTENT_ACCESS="{{ dt_app_log_content_access }}"
-        - INFRA_ONLY="{{ dt_infra_only }}"
-        state: present
-      when: installed.exists == True
+        #state: absent
+      #when: installed.exists == True
+    #-
+      #name: "update: execute oneagent install file"
+      #win_package:
+        #path: C:\Temp\dynatrace-oneagent-windows-latest.exe
+        #product_id: '{9257BAF1-3E45-42F9-BBB5-48D5DDD98105}'
+        #arguments:
+        #- HOST_GROUP="{{ dt_host_group }}"
+        #- APP_LOG_CONTENT_ACCESS="{{ dt_app_log_content_access }}"
+        #- INFRA_ONLY="{{ dt_infra_only }}"
+        #state: present
+      #when: installed.exists == True
