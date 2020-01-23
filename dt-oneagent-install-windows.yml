@@ -30,7 +30,8 @@
     -
       name: "extract oneagent install msi file"
       win_command: C:\Temp\dynatrace-oneagent-windows-latest.exe --unpack-msi C:\Temp
-      #args: "chdir C:\\Temp"
+      args:
+        chdir: C:\Temp
     #-
       #name: "identify oneagent install msi file"
       #win_command: dir /b Dynatrace-OneAgent-Windows-*msi
