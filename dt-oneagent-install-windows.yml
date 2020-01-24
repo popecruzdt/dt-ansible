@@ -17,9 +17,9 @@
         path: C:\Temp
       register: temp_dir
     -
-      name: "check if oneagent is already installed via windows registry product id"
+      name: "check if oneagent is already installed via windows service registry key"
       win_reg_stat:
-        path: HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\{9257BAF1-3E45-42F9-BBB5-48D5DDD98105}
+        path: HKLM:\SYSTEM\ControlSet002\Services\Dynatrace OneAgent
         name: DisplayName
       register: installed
     -
@@ -28,30 +28,13 @@
         url: "{{ dt_api_endpoint }}deployment/installer/agent/windows/default/latest?Api-Token={{ dt_api_token }}&arch=x86&flavor=default"
         dest: C:\Temp\dynatrace-oneagent-windows-latest.exe
     -
-      name: "extract oneagent install msi file"
-      win_command: C:\Temp\dynatrace-oneagent-windows-latest.exe --unpack-msi C:\Temp
-      args:
-        chdir: C:\Temp
-    -
-      name: "identify oneagent install msi file"
-      win_command: cmd.exe /c "dir /b Dynatrace-OneAgent-Windows-*msi"
-      args:
-        chdir: C:\Temp
-      register: oneagent_msi
-    -
-      name: "output oneagent_msi"
-      debug:
-        msg: "C:\\Temp\\{{ oneagent_msi.stdout_lines[0] }}"
-    -
       name: "install: execute oneagent install file"
       win_package:
-        path: "C:\\Temp\\{{ oneagent_msi.stdout_lines[0] }}"
-        #product_id: '{9257BAF1-3E45-42F9-BBB5-48D5DDD98105}'
-        #arguments:
-        #- /log "C:\Temp\install.log"
-        #- HOST_GROUP="{{ dt_host_group }}"
-        #- APP_LOG_CONTENT_ACCESS="{{ dt_app_log_content_access }}"
-        #- INFRA_ONLY="{{ dt_infra_only }}"
+        path: C:\Temp\dynatrace-oneagent-windows-latest.exe
+        arguments:
+        - HOST_GROUP="{{ dt_host_group }}"
+        - APP_LOG_CONTENT_ACCESS="{{ dt_app_log_content_access }}"
+        - INFRA_ONLY="{{ dt_infra_only }}"
         state: present
       when: installed.exists == False
     #-
