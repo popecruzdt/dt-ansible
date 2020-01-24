@@ -41,7 +41,7 @@
     -
       name: "output oneagent_msi"
       debug:
-        msg: "{{ oneagent_msi }}"
+        msg: "{{ oneagent_msi.stdout_lines }}"
     #-
       #name: "install: execute oneagent install file"
       #win_package:
