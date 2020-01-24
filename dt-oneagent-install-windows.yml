@@ -34,7 +34,7 @@
         chdir: C:\Temp
     -
       name: "identify oneagent install msi file"
-      win_command: dir /b Dynatrace-OneAgent-Windows-*msi
+      win_command: cmd.exe /c "dir /b Dynatrace-OneAgent-Windows-*msi"
       args:
         chdir: C:\Temp
       register: oneagent_msi
