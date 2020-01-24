@@ -19,7 +19,7 @@
     -
       name: "check if oneagent is already installed via windows service registry key"
       win_reg_stat:
-        path: HKLM:\SYSTEM\ControlSet002\Services\Dynatrace OneAgent
+        path: HKLM:\SYSTEM\CurrentControlSet\Services\Dynatrace OneAgent
         name: DisplayName
       register: installed
     -
