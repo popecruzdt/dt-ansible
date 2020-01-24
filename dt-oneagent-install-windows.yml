@@ -41,18 +41,18 @@
     -
       name: "output oneagent_msi"
       debug:
-        msg: "{{ oneagent_msi.stdout_lines }}"
-    #-
-      #name: "install: execute oneagent install file"
-      #win_package:
-        #path: "C:\\Temp\\{{ oneagent_msi }}"
-        ##product_id: '{9257BAF1-3E45-42F9-BBB5-48D5DDD98105}'
-        #arguments:
-        #- HOST_GROUP="{{ dt_host_group }}"
-        #- APP_LOG_CONTENT_ACCESS="{{ dt_app_log_content_access }}"
-        #- INFRA_ONLY="{{ dt_infra_only }}"
-        #state: present
-      #when: installed.exists == False
+        msg: "{{ oneagent_msi.stdout_lines[0] }}"
+    -
+      name: "install: execute oneagent install file"
+      win_package:
+        path: "C:\\Temp\\{{ oneagent_msi.stdout_lines[0] }}"
+        #product_id: '{9257BAF1-3E45-42F9-BBB5-48D5DDD98105}'
+        arguments:
+        - HOST_GROUP="{{ dt_host_group }}"
+        - APP_LOG_CONTENT_ACCESS="{{ dt_app_log_content_access }}"
+        - INFRA_ONLY="{{ dt_infra_only }}"
+        state: present
+      when: installed.exists == False
     #-
       #name: "update: uninstall existing oneagent package"
       #win_package:
