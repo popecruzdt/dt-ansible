@@ -5,13 +5,18 @@
 # dt_host_group: -> dynatrace host group name
 # dt_app_log_content_access: -> flag to enable or disable log analytics on host (0 or 1)
 # dt_infra_only: -> flag to set cloud infrastructure monitoring mode on host (0 or 1)
+# dt_product_id: -> (optional) if set, overrides the msi product id in the playbook
 ---
 -
   hosts: "{{ hosts_group }}"
-  vars:
-    dt_product_id: '{9257BAF1-3E45-42F9-BBB5-48D5DDD98105}'
   name: "dynatrace oneagent install on windows"
   tasks:
+    -
+      name: "specify dynatrace msi product id if not set"
+      set_stats:
+        data:
+          dt_product_id: '{9257BAF1-3E45-42F9-BBB5-48D5DDD98105}'
+      when: dt_product_id is undefined
     -
       name: "validate ansible tower execution on windows"
       win_stat:
@@ -40,15 +45,17 @@
         state: present
       when: installed.exists == False
     -
-      set_fact:
-        dt_product_id_fact: "{{ dt_product_id }}"
-      when: installed.exists == False
+      name: "update: validate existing oneagent product id exists"
+      win_reg_stat:
+        path: "HKLM:\\SOFTWARE\\WOW6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\{{ dt_product_id }}"
+        name: DisplayName
+      register: uninstall
     -
       name: "update: uninstall existing oneagent package"
       win_package:
-        product_id: "{{ dt_product_id_fact }}"
+        product_id: "{{ dt_product_id }}"
         state: absent
-      when: installed.exists == True and dt_product_id_fact is defined
+      when: installed.exists == True and uninstall.exists == True
     -
       name: "update: execute oneagent install file"
       win_package:
@@ -59,8 +66,4 @@
         - APP_LOG_CONTENT_ACCESS="{{ dt_app_log_content_access }}"
         - INFRA_ONLY="{{ dt_infra_only }}"
         state: present
-      when: installed.exists == True and dt_product_id_fact is defined
-    -
-      set_fact:
-        dt_product_id_fact = "{{ dt_product_id }}"
-      when: installed.exists == True
+      when: installed.exists == True and uninstall.exists == True
