@@ -47,6 +47,7 @@
         path: "HKLM:\\SOFTWARE\\WOW6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\{{ dt_product_id }}"
         name: DisplayName
       register: uninstall
+      when: installed.exists == True
     -
       name: "update: uninstall existing oneagent package"
       win_package:
