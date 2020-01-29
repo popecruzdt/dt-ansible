@@ -23,6 +23,10 @@
         path: C:\Temp
       register: temp_dir
     -
+      name: "output product id"
+      debug:
+        msg: "{{ dt_product_id }}"
+    -
       name: "check if oneagent is already installed via windows service registry key"
       win_reg_stat:
         path: HKLM:\SYSTEM\CurrentControlSet\Services\Dynatrace OneAgent
