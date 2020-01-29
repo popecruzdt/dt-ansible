@@ -5,11 +5,13 @@
 # dt_host_group: -> dynatrace host group name
 # dt_app_log_content_access: -> flag to enable or disable log analytics on host (0 or 1)
 # dt_infra_only: -> flag to set cloud infrastructure monitoring mode on host (0 or 1)
+# {65E3C889-BF02-4A22-9E22-5DCA88789582} v1.183.109 - live
+# {73CFAADA-499D-4B5F-A7D4-9687DDBDCAF5} v1.183.151 - practice
 ---
 -
   hosts: "{{ hosts_group }}"
   vars:
-    dt_product_id: '{9257BAF1-3E45-42F9-BBB5-48D5DDD98105}'
+    dt_product_id: '{73CFAADA-499D-4B5F-A7D4-9687DDBDCAF5}'
   name: "dynatrace oneagent install on windows"
   tasks:
     -
