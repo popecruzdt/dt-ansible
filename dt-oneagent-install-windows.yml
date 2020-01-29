@@ -5,27 +5,18 @@
 # dt_host_group: -> dynatrace host group name
 # dt_app_log_content_access: -> flag to enable or disable log analytics on host (0 or 1)
 # dt_infra_only: -> flag to set cloud infrastructure monitoring mode on host (0 or 1)
-# dt_product_id: -> (optional) if set, overrides the msi product id in the playbook
 ---
 -
   hosts: "{{ hosts_group }}"
+  vars:
+    dt_product_id: '{9257BAF1-3E45-42F9-BBB5-48D5DDD98105}'
   name: "dynatrace oneagent install on windows"
   tasks:
-    -
-      name: "specify dynatrace msi product id if not set"
-      set_stats:
-        data:
-          dt_product_id: '{9257BAF1-3E45-42F9-BBB5-48D5DDD98105}'
-      #when: dt_product_id is undefined
     -
       name: "validate ansible tower execution on windows"
       win_stat:
         path: C:\Temp
       register: temp_dir
-    -
-      name: "output product id"
-      debug:
-        msg: "{{ dt_product_id }}"
     -
       name: "check if oneagent is already installed via windows service registry key"
       win_reg_stat:
