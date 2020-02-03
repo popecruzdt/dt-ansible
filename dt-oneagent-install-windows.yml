@@ -11,7 +11,7 @@
 -
   hosts: "{{ hosts_group }}"
   vars:
-    dt_product_id: '{73CFAADA-499D-4B5F-A7D4-9687DDBDCAF5}'
+    dt_product_id: '{65E3C889-BF02-4A22-9E22-5DCA88789582}'
   name: "dynatrace oneagent install on windows"
   tasks:
     -
