@@ -6,7 +6,7 @@ ansible_winrm_server_cert_validation: ignore # used to tell Ansible Tower to ign
 ## dt-oneagent-install-linux
 ---
 hosts_group: linux
-dt_api_endpoint: https://abc123.live.dynatrace.com/api/v1/
+dt_api_endpoint: https://abc123.sprint.dynatracelabs.com/api/v1/
 dt_host_group: <Initials_CompanyName>
 dt_app_log_content_access: 1 # 1-enabled, 0-disabled
 dt_infra_only: 0 # 0-fullstack, 1-infra_only
@@ -14,7 +14,7 @@ dt_infra_only: 0 # 0-fullstack, 1-infra_only
 ## dt-oneagent-install-windows
 ---
 hosts_group: windows
-dt_api_endpoint: https://abc123.live.dynatrace.com/api/v1/
+dt_api_endpoint: https://abc123.sprint.dynatracelabs.com/api/v1/
 dt_host_group: <Initials_CompanyName>
 dt_app_log_content_access: 1 # 1-enabled, 0-disabled
 dt_infra_only: 0 # 0-fullstack, 1-infra_only
@@ -22,21 +22,21 @@ dt_infra_only: 0 # 0-fullstack, 1-infra_only
 ## dt-api-application-config
 ---
 host_name: <One of your Linux EC2 Hosts>
-dt_config_api_endpoint: https://abc123.live.dynatrace.com/api/config/v1/
+dt_config_api_endpoint: https://abc123.sprint.dynatracelabs.com/api/config/v1/
 dt_web_application_name: <Initials_CompanyName>
 dt_url_pattern: <One of your Linux EC2 Hosts>
 
 ## dt-api-management-zone
 ---
 host_name: <One of your Linux EC2 Hosts>
-dt_config_api_endpoint: https://abc123.live.dynatrace.com/api/config/v1/
+dt_config_api_endpoint: https://abc123.sprint.dynatracelabs.com/api/config/v1/
 dt_host_group: <Initials_CompanyName>
 dt_mz_name: <Initials_CompanyName>
 
 ## dt-api-alerting-profile
 ---
 host_name: <One of your Linux EC2 Hosts>
-dt_config_api_endpoint: https://abc123.live.dynatrace.com/api/config/v1/
+dt_config_api_endpoint: https://abc123.sprint.dynatracelabs.com/api/config/v1/
 dt_mz_name: <Initials_CompanyName>
 dt_mz_64id: <Management_Zone_ID>
 dt_notification_name: <Initials_CompanyName>
@@ -45,14 +45,14 @@ dt_email_receiver: <Your_Email_Address>
 ## dt-api-dashboard-clone
 ---
 host_name: <One of your Linux EC2 Hosts>
-dt_config_api_endpoint: https://abc123.live.dynatrace.com/api/config/v1/
+dt_config_api_endpoint: https://abc123.sprint.dynatracelabs.com/api/config/v1/
 dt_mz_name: <Initials_CompanyName>
 dt_mz_64id: <Management_Zone_ID>
 dt_app_id: <Web_Application_ID>
 dt_dashboard_name: “<Initials_CompanyName> Application Overview”
 dt_owner_id: <Your Email Address>
-dt_clone_uuid: <Dashboard UUID You’ve Been Provided>
-dt_base_url: https://abc123.live.dynatrace.com/
+dt_clone_uuid: 5c46fdca-5e79-42bb-92d2-eeaf00fdeb69
+dt_base_url: https://abc123.sprint.dynatracelabs.com.com/
 dt_email_receiver: <Your Email Address>
 
 ## dt-onboarding-workflow-set-stats
@@ -61,11 +61,11 @@ host_name: <One of your Linux EC2 Hosts>
 
 ## dt-onboarding-workflow
 ---
-host_name: #target host to execute playbook
-dt_config_api_endpoint: #dynatrace configuration api endpoint
-dt_api_endpoint: #dynatrace api endpoint
-dt_base_url: #dynatrace base url
-application_name: #name of application being onboarded
-application_url_pattern: #url pattern of application
-application_owner_email: #application owner email address
-dt_clone_uuid: #unique UUID id of the dynatrace dashboard to clone
+host_name: <One of your Linux EC2 Hosts> #target host to execute playbook
+dt_config_api_endpoint: https://abc123.sprint.dynatracelabs.com/api/config/v1/ #dynatrace configuration api endpoint
+dt_api_endpoint: https://abc123.sprint.dynatracelabs.com/api/v1/ #dynatrace api endpoint
+dt_base_url: https://abc123.sprint.dynatracelabs.com/ #dynatrace base url
+application_name: <Initials_CompanyName_Workflow> #name of application being onboarded
+application_url_pattern: <One of your Linux EC2 Hosts> #url pattern of application
+application_owner_email: <Your Email Address> #application owner email address
+dt_clone_uuid: 5c46fdca-5e79-42bb-92d2-eeaf00fdeb69 #unique UUID id of the dynatrace dashboard to clone
