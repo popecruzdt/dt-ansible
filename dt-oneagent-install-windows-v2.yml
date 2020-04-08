@@ -1,0 +1,42 @@
+# dynatrace oneagent install on windows
+# hosts_group -> inventory group of hosts to execute playbook on
+# dt_api_endpoint -> dynatrace environment api endpoint (include trailing /)
+# dt_api_token -> dynatrace api install token
+# dt_host_group: -> dynatrace host group name
+# dt_app_log_content_access: -> flag to enable or disable log analytics on host (0 or 1)
+# dt_infra_only: -> flag to set cloud infrastructure monitoring mode on host (0 or 1)
+---
+-
+  hosts: "{{ hosts_group }}"
+  name: "dynatrace oneagent install on windows"
+  tasks:
+    -
+      name: "validate ansible tower execution on windows"
+      win_stat:
+        path: C:\Temp
+      register: temp_dir
+    -
+      name: "check if oneagent is already installed via windows service registry key"
+      win_reg_stat:
+        path: HKLM:\SYSTEM\CurrentControlSet\Services\Dynatrace OneAgent
+        name: DisplayName
+      register: installed
+    -
+      name: "install: download oneagent install file"
+      win_get_url:
+        url: "{{ dt_api_endpoint }}deployment/installer/agent/windows/default/latest?Api-Token={{ dt_api_token }}&arch=x86&flavor=default"
+        dest: C:\Temp\dynatrace-oneagent-windows-latest.exe
+      when: installed.exists == False
+    -
+      name: "install: execute oneagent install file"
+      win_command: dynatrace-oneagent-windows-latest.exe /quiet --set-host-group="{{ dt_host_group }}" --set-app-log-content-access="{{ dt_app_log_content_access }}" --set-infra-only="{{ dt_infra_only }}"
+      args:
+        chdir: C:\Temp\
+      when: installed.exists == False
+    -
+      name: "install: validate oneagent installation via windows service registry key"
+      win_reg_stat:
+        path: HKLM:\SYSTEM\CurrentControlSet\Services\Dynatrace OneAgent
+        name: DisplayName
+      register: installed
+      failed_when: installed.exists == False
