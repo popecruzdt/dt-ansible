@@ -22,12 +22,12 @@
       register: installed
     -
       name: "download oneagent install file"
-      get_url: 
+      get_url:
          # on the target systems, ensure that python is compiled with SSL support
          # python -c "import ssl; print(ssl.OPENSSL_VERSION)"
-         # urlk#https://eyexxxx.live.dynatrace.com/api/v1/deployment/installer/agent/unix/default/latest?arch=x86&flavor=default" --header="Authorization: Api-Token llllll"
-         url: "{{ dt_api_endpoint }}deployment/installer/agent/unix/default/latest?arch=x86&flavor=default"
-         headers: "Authorization: Api-Token {{ dt_api_token }} "
+         url: "{{ dt_api_endpoint }}deployment/installer/agent/unix/default/latest?Api-Token={{ dt_api_token }}&arch=x86&flavor=default"
+         #url: url: "{{ dt_api_endpoint }}deployment/installer/agent/unix/default/latest?arch=x86&flavor=default" ## optionally pass Api-Token as a header instead of a parameter
+         #headers: "Authorization: Api-Token {{ dt_api_token }} " ## optionally pass Api-Token as a header instead of a parameter
          dest: /tmp/dynatrace-oneagent-linux-latest.sh
          mode: '0777'
          #validate_certs: false
