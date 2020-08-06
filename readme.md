@@ -11,3 +11,8 @@ This repo is a collection of Ansible playbook yaml files designed for automating
 * dt-onboarding-workflow-set-stats.yml - Helper Playbook that sets artifacts for a workflow utilizing each Playbook
 
 The comments at the top of each Playbook contain the list of extra variables that are expected.
+
+### Python SSL Support
+On the target systems, you need to ensure that python is compiled with SSL support.\
+`python -c "import ssl; print(ssl.OPENSSL_VERSION)"`
+
