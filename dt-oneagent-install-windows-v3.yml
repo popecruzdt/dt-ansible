@@ -24,6 +24,7 @@
       name: "set oneagent latest version fact (dt_latest_version)"
       set_fact:
         dt_latest_version: "{{ latest_version.json.latestAgentVersion }}"
+      when: latest_version is defined
     # Check if OneAgent is already installed, if yes then check installed version
     -
       name: "check that Temp directory exists"
@@ -49,15 +50,17 @@
       name: "set oneagent current version fact (dt_current_version)"
       set_fact:
         dt_current_version: "{{lookup('flattened', current_version.stdout_lines)}}"
-      when: installed.exists == True
+      when: installed.exists == True and current_version is defined
     -
       name: "debug output current version"
       debug:
         var: dt_current_version
+      when: installed.exists == True and current_version is defined
     -
       name: "debug output latest version"
       debug:
         var: dt_latest_version
+      when: dt_latest_version is defined
     # Download OneAgent install file if installation or upgrade is required
     -
       name: "download oneagent install file"
@@ -109,7 +112,7 @@
       name: "set current host group fact (dt_current_host_group)"
       set_fact:
         dt_current_host_group: "{{lookup('flattened', current_host_group.stdout_lines)}}"
-      when: current_host_group.exists == True
+      when: current_host_group is defined
     -
       name: "update/correct host group setting if not correct"
       win_shell: |
@@ -118,4 +121,4 @@
         net start "Dynatrace OneAgent"
       args:
         chdir: C:\Program Files (x86)\dynatrace\oneagent\agent\tools\
-      when: dt_current_host_group != dt_host_group
+      when: dt_current_host_group != dt_host_group and dt_host_group is defined and dt_current_host_group is defined
