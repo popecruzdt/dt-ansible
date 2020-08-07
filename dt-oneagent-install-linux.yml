@@ -89,10 +89,12 @@
       stat:
         path: /opt/dynatrace/oneagent/agent/lib64/liboneagentos.so
       register: installed
+      failed_when: installed.stat.exists != True
     # Check that the Host Group is correct, if not then correct it
     -
       name: "check host group is correct"
       shell: "/opt/dynatrace/oneagent/agent/tools/oneagentctl --get-host-group"
+      become: yes
       register: current_host_group
       changed_when: False
     -
@@ -103,4 +105,5 @@
     -
       name: "update/correct host group setting if not correct"
       shell: "service oneagent stop; /opt/dynatrace/oneagent/agent/tools/oneagentctl --set-host-group={{ dt_host_group }}; service oneagent start"
+      become: yes
       when: dt_current_host_group != dt_host_group and dt_host_group is defined and dt_current_host_group is defined
