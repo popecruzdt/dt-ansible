@@ -15,6 +15,7 @@
       shell:
         cmd: ls /opt
       become: yes
+      changed_when: False
     # Check the latest available OneAgent version
     -
       name: "get latest oneagent version from dynatrace environment api"
