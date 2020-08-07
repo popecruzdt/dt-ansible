@@ -5,20 +5,33 @@
 # dt_host_group: -> dynatrace host group name
 # dt_app_log_content_access: -> flag to enable or disable log analytics on host (0 or 1)
 # dt_infra_only: -> flag to set cloud infrastructure monitoring mode on host (0 or 1)
-# {65E3C889-BF02-4A22-9E22-5DCA88789582} v1.183.109 - live
-# {73CFAADA-499D-4B5F-A7D4-9687DDBDCAF5} v1.183.151 - practice
 ---
 -
   hosts: "{{ hosts_group }}"
-  vars:
-    dt_product_id: '{65E3C889-BF02-4A22-9E22-5DCA88789582}'
   name: "dynatrace oneagent install on windows"
   tasks:
+    # Check the current available OneAgent version
     -
-      name: "validate ansible tower execution on windows"
-      win_stat:
+      name: "get latest oneagent version from dynatrace environment api"
+      local_action:
+        module: uri
+        url: "{{ dt_api_endpoint }}deployment/installer/agent/unix/default/latest/metainfo?flavor=default&arch=all&bitness=all"
+        headers:
+          accept: application/json
+          Authorization: Api-Token {{ dt_api_token }}
+      register: latest_version
+    -
+      name: "set oneagent latest version fact (dt_latest_version)"
+      set_fact:
+        dt_latest_version: "{{ latest_version.json.latestAgentVersion }}"
+      when: latest_version is defined
+    # Check if OneAgent is already installed, if yes then check installed version
+    -
+      name: "check that Temp directory exists"
+      win_file:
         path: C:\Temp
-      register: temp_dir
+        state: directory
+      changed_when: False
     -
       name: "check if oneagent is already installed via windows service registry key"
       win_reg_stat:
@@ -26,14 +39,44 @@
         name: DisplayName
       register: installed
     -
+      name: "check current agent version"
+      win_shell: .\oneagentctl --version
+      args:
+        chdir: C:\Program Files (x86)\dynatrace\oneagent\agent\tools\
+      register: current_version
+      when: installed.exists == True
+      changed_when: False
+    -
+      name: "set oneagent current version fact (dt_current_version)"
+      set_fact:
+        dt_current_version: "{{lookup('flattened', current_version.stdout_lines)}}"
+      when: installed.exists == True and current_version is defined
+    -
+      name: "debug output current version"
+      debug:
+        var: dt_current_version
+      when: installed.exists == True and current_version is defined
+    -
+      name: "debug output latest version"
+      debug:
+        var: dt_latest_version
+      when: dt_latest_version is defined
+    # Download OneAgent install file if installation or upgrade is required
+    -
       name: "download oneagent install file"
       win_get_url:
-        url: "{{ dt_api_endpoint }}deployment/installer/agent/windows/default/latest?Api-Token={{ dt_api_token }}&arch=x86&flavor=default"
+        url: "{{ dt_api_endpoint }}deployment/installer/agent/windows/default/latest?arch=x86&flavor=default"
         dest: C:\Temp\dynatrace-oneagent-windows-latest.exe
+        headers:
+          Authorization: Api-Token {{ dt_api_token }}
+      when: installed.exists != True or dt_current_version != dt_latest_version
+      changed_when: False
+    # Install OneAgent
     -
       name: "install: execute oneagent install file"
       win_package:
-        product_id: "{{ dt_product_id }}"
+        #product_id: "{{ dt_product_id }}"
+        product_id: "{65E3C889-BF02-4A22-9E22-5DCA88789582}" ## Dummy Product ID
         path: C:\Temp\dynatrace-oneagent-windows-latest.exe
         arguments:
         - HOST_GROUP="{{ dt_host_group }}"
@@ -41,27 +84,49 @@
         - INFRA_ONLY="{{ dt_infra_only }}"
         state: present
       when: installed.exists == False
+    # Update OneAgent
     -
-      name: "update: validate existing oneagent product id exists"
+      name: "update: oneagent update block"
+      block:
+        -
+          name: "update: execute oneagent install file"
+          win_package:
+            #product_id: "{{ dt_product_id }}"
+            product_id: "{65E3C889-BF02-4A22-9E22-5DCA88789582}" ## Dummy Product ID
+            path: C:\Temp\dynatrace-oneagent-windows-latest.exe
+            arguments:
+            - HOST_GROUP="{{ dt_host_group }}"
+            - APP_LOG_CONTENT_ACCESS="{{ dt_app_log_content_access }}"
+            - INFRA_ONLY="{{ dt_infra_only }}"
+            state: present
+      when: installed.exists == True and dt_current_version != dt_latest_version
+    # Validate OneAgent is installed
+    -
+      name: "validate oneagent installation via windows service registry key"
       win_reg_stat:
-        path: "HKLM:\\SOFTWARE\\WOW6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\{{ dt_product_id }}"
+        path: HKLM:\SYSTEM\CurrentControlSet\Services\Dynatrace OneAgent
         name: DisplayName
-      register: uninstall
-      when: installed.exists == True
+      register: installed
+      failed_when: installed.exists == False
+    # Check that the Host Group is correct, if not then correct it
     -
-      name: "update: uninstall existing oneagent package"
-      win_package:
-        product_id: "{{ dt_product_id }}"
-        state: absent
-      when: installed.exists == True and uninstall.exists == True
+      name: "get current host group setting"
+      win_shell: .\oneagentctl --get-host-group
+      args:
+        chdir: C:\Program Files (x86)\dynatrace\oneagent\agent\tools\
+      register: current_host_group
+      changed_when: False
     -
-      name: "update: execute oneagent install file"
-      win_package:
-        path: C:\Temp\dynatrace-oneagent-windows-latest.exe
-        product_id: "{{ dt_product_id }}"
-        arguments:
-        - HOST_GROUP="{{ dt_host_group }}"
-        - APP_LOG_CONTENT_ACCESS="{{ dt_app_log_content_access }}"
-        - INFRA_ONLY="{{ dt_infra_only }}"
-        state: present
-      when: installed.exists == True and uninstall.exists == True
+      name: "set current host group fact (dt_current_host_group)"
+      set_fact:
+        dt_current_host_group: "{{lookup('flattened', current_host_group.stdout_lines)}}"
+      when: current_host_group is defined
+    -
+      name: "update/correct host group setting if not correct"
+      win_shell: |
+        net stop "Dynatrace OneAgent"
+        .\oneagentctl --set-host-group={{ dt_host_group }}
+        net start "Dynatrace OneAgent"
+      args:
+        chdir: C:\Program Files (x86)\dynatrace\oneagent\agent\tools\
+      when: dt_current_host_group != dt_host_group and dt_host_group is defined and dt_current_host_group is defined
