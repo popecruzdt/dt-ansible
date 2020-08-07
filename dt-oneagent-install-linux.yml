@@ -39,6 +39,7 @@
     -
       name: "check installed oneagent version"
       shell: "/opt/dynatrace/oneagent/agent/tools/oneagentctl --version"
+      become: yes
       register: current_version
       when: installed.stat.exists == True
       changed_when: False
