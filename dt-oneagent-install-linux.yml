@@ -64,7 +64,7 @@
          # on the target systems, ensure that python is compiled with SSL support
          # python -c "import ssl; print(ssl.OPENSSL_VERSION)"
          #url: "{{ dt_api_endpoint }}deployment/installer/agent/unix/default/latest?Api-Token={{ dt_api_token }}&arch=x86&flavor=default" ## optionally pass Api-Token as a parameter instead of a header
-         url: url: "{{ dt_api_endpoint }}deployment/installer/agent/unix/default/latest?arch=x86&flavor=default" ## optionally pass Api-Token as a header instead of a parameter
+         url: "{{ dt_api_endpoint }}deployment/installer/agent/unix/default/latest?arch=x86&flavor=default" ## optionally pass Api-Token as a header instead of a parameter
          headers: "Authorization: Api-Token {{ dt_api_token }} " ## optionally pass Api-Token as a header instead of a parameter
          dest: /tmp/dynatrace-oneagent-linux-latest.sh
          mode: '0777'
