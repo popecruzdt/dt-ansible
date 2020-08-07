@@ -46,12 +46,12 @@
       name: "set oneagent current version fact (dt_current_version)"
       set_fact:
         dt_current_version: "{{lookup('flattened', current_version.stdout_lines)}}"
-      when: installed.exists == True and current_version is defined
+      when: installed.stat.exists == True and current_version is defined
     -
       name: "debug output current version"
       debug:
         var: dt_current_version
-      when: installed.exists == True and current_version is defined
+      when: installed.stat.exists == True and current_version is defined
     -
       name: "debug output latest version"
       debug:
@@ -69,7 +69,7 @@
          dest: /tmp/dynatrace-oneagent-linux-latest.sh
          mode: '0777'
          #validate_certs: false
-      when: installed.exists != True or dt_current_version != dt_latest_version
+      when: installed.stat.exists != True or dt_current_version != dt_latest_version
       changed_when: False
     # Install OneAgent
     -
