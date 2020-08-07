@@ -10,7 +10,7 @@
   hosts: "{{ hosts_group }}"
   name: "dynatrace oneagent install on windows"
   tasks:
-    # Check the current available OneAgent version
+    # Check the latest available OneAgent version
     -
       name: "get latest oneagent version from dynatrace environment api"
       local_action:

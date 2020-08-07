@@ -11,33 +11,96 @@
   name: "dynatrace oneagent install on linux"
   tasks:
     -
-      name: "validate ansible tower execution on linux with sudo access"
+      name: "validate ansible execution on linux with sudo access"
       shell:
         cmd: ls /opt
       become: yes
+    # Check the latest available OneAgent version
+    -
+      name: "get latest oneagent version from dynatrace environment api"
+      local_action:
+        module: uri
+        url: "{{ dt_api_endpoint }}deployment/installer/agent/unix/default/latest/metainfo?flavor=default&arch=all&bitness=all"
+        headers:
+          accept: application/json
+          Authorization: Api-Token {{ dt_api_token }}
+      register: latest_version
+    -
+      name: "set oneagent latest version fact (dt_latest_version)"
+      set_fact:
+        dt_latest_version: "{{ latest_version.json.latestAgentVersion }}"
+      when: latest_version is defined
+    # Check if OneAgent is already installed, if yes then check installed version
     -
       name: "check if oneagent is already installed"
       stat:
         path: /opt/dynatrace/oneagent/agent/lib64/liboneagentos.so
       register: installed
     -
+      name: "check installed oneagent version"
+      shell: "/opt/dynatrace/oneagent/agent/tools/oneagentctl --version"
+      register: current_version
+      when: installed.stat.exists == True
+      changed_when: False
+    -
+      name: "set oneagent current version fact (dt_current_version)"
+      set_fact:
+        dt_current_version: "{{lookup('flattened', current_version.stdout_lines)}}"
+      when: installed.exists == True and current_version is defined
+    -
+      name: "debug output current version"
+      debug:
+        var: dt_current_version
+      when: installed.exists == True and current_version is defined
+    -
+      name: "debug output latest version"
+      debug:
+        var: dt_latest_version
+      when: dt_latest_version is defined
+    # Download OneAgent install file if installation or upgrade is required
+    -
       name: "download oneagent install file"
       get_url:
          # on the target systems, ensure that python is compiled with SSL support
          # python -c "import ssl; print(ssl.OPENSSL_VERSION)"
-         url: "{{ dt_api_endpoint }}deployment/installer/agent/unix/default/latest?Api-Token={{ dt_api_token }}&arch=x86&flavor=default"
-         #url: url: "{{ dt_api_endpoint }}deployment/installer/agent/unix/default/latest?arch=x86&flavor=default" ## optionally pass Api-Token as a header instead of a parameter
-         #headers: "Authorization: Api-Token {{ dt_api_token }} " ## optionally pass Api-Token as a header instead of a parameter
+         #url: "{{ dt_api_endpoint }}deployment/installer/agent/unix/default/latest?Api-Token={{ dt_api_token }}&arch=x86&flavor=default" ## optionally pass Api-Token as a parameter instead of a header
+         url: url: "{{ dt_api_endpoint }}deployment/installer/agent/unix/default/latest?arch=x86&flavor=default" ## optionally pass Api-Token as a header instead of a parameter
+         headers: "Authorization: Api-Token {{ dt_api_token }} " ## optionally pass Api-Token as a header instead of a parameter
          dest: /tmp/dynatrace-oneagent-linux-latest.sh
          mode: '0777'
          #validate_certs: false
+      when: installed.exists != True or dt_current_version != dt_latest_version
+      changed_when: False
+    # Install OneAgent
     -
       name: "install: execute oneagent install file with root privileges"
       shell: "sh /tmp/dynatrace-oneagent-linux-latest.sh HOST_GROUP={{ dt_host_group }} APP_LOG_CONTENT_ACCESS={{ dt_app_log_content_access }}{% if dt_infra_only is defined %} INFRA_ONLY={{ dt_infra_only }}{% endif %}"
       become: yes
       when: ansible_architecture != "armv7l" and installed.stat.exists == False
+    # Update OneAgent
     -
       name: "update: execute oneagent install file with root privileges"
       shell: "sh /tmp/dynatrace-oneagent-linux-latest.sh HOST_GROUP={{ dt_host_group }} APP_LOG_CONTENT_ACCESS={{ dt_app_log_content_access }}{% if dt_infra_only is defined %} INFRA_ONLY={{ dt_infra_only }}{% endif %}"
       become: yes
-      when: ansible_architecture != "armv7l" and installed.stat.exists == True
+      when: ansible_architecture != "armv7l" and installed.stat.exists == True and dt_current_version != dt_latest_version
+    # Validate OneAgent is installed
+    -
+      name: "validate oneagent installation"
+      stat:
+        path: /opt/dynatrace/oneagent/agent/lib64/liboneagentos.so
+      register: installed
+    # Check that the Host Group is correct, if not then correct it
+    -
+      name: "check host group is correct"
+      shell: "/opt/dynatrace/oneagent/agent/tools/oneagentctl --get-host-group"
+      register: current_host_group
+      changed_when: False
+    -
+      name: "set current host group fact (dt_current_host_group)"
+      set_fact:
+        dt_current_host_group: "{{lookup('flattened', current_host_group.stdout_lines)}}"
+      when: current_host_group is defined
+    -
+      name: "update/correct host group setting if not correct"
+      shell: "service oneagent stop; /opt/dynatrace/oneagent/agent/tools/oneagentctl --set-host-group={{ dt_host_group }}; service oneagent start"
+      when: dt_current_host_group != dt_host_group and dt_host_group is defined and dt_current_host_group is defined
