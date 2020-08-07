@@ -10,6 +10,12 @@
   hosts: "{{ hosts_group }}"
   name: "dynatrace oneagent install on windows"
   tasks:
+    -
+      name: "check that Temp directory exists"
+      win_file:
+        path: C:\Temp
+        state: directory
+      changed_when: False
     # Check the latest available OneAgent version
     -
       name: "get latest oneagent version from dynatrace environment api"
@@ -26,12 +32,6 @@
         dt_latest_version: "{{ latest_version.json.latestAgentVersion }}"
       when: latest_version is defined
     # Check if OneAgent is already installed, if yes then check installed version
-    -
-      name: "check that Temp directory exists"
-      win_file:
-        path: C:\Temp
-        state: directory
-      changed_when: False
     -
       name: "check if oneagent is already installed via windows service registry key"
       win_reg_stat:
