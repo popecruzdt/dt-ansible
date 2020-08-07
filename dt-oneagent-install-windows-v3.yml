@@ -100,6 +100,14 @@
             - INFRA_ONLY="{{ dt_infra_only }}"
             state: present
       when: installed.exists == True and dt_current_version != dt_latest_version
+    # Validate OneAgent is installed
+    -
+      name: "validate oneagent installation via windows service registry key"
+      win_reg_stat:
+        path: HKLM:\SYSTEM\CurrentControlSet\Services\Dynatrace OneAgent
+        name: DisplayName
+      register: installed
+      failed_when: installed.exists == False
     # Check that the Host Group is correct, if not then correct it
     -
       name: "get current host group setting"
