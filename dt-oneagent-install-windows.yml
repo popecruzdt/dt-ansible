@@ -10,11 +10,13 @@
   hosts: "{{ hosts_group }}"
   name: "dynatrace oneagent install on windows"
   tasks:
+    # Check the OS architecture bitness
     -
       name: "check OS architecture"
       debug:
         var: ansible_architecture
       when: ansible_architecture is defined
+    # Check that Temp directory exists
     -
       name: "check that Temp directory exists"
       win_file:
@@ -120,6 +122,7 @@
       args:
         chdir: C:\Program Files (x86)\dynatrace\oneagent\agent\tools\
       register: current_host_group
+      when: ansible_architecture == "64-bit"
       changed_when: False
     -
       name: "set current host group fact (dt_current_host_group)"
@@ -134,4 +137,4 @@
         net start "Dynatrace OneAgent"
       args:
         chdir: C:\Program Files (x86)\dynatrace\oneagent\agent\tools\
-      when: dt_current_host_group != dt_host_group and dt_host_group is defined and dt_current_host_group is defined
+      when: dt_current_host_group != dt_host_group and dt_host_group is defined and dt_current_host_group is defined and ansible_architecture == "64-bit"
