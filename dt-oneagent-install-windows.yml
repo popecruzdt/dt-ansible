@@ -11,6 +11,11 @@
   name: "dynatrace oneagent install on windows"
   tasks:
     -
+      name: "check OS architecture"
+      debug:
+        var: ansible_architecture
+      when: ansible_architecture is defined
+    -
       name: "check that Temp directory exists"
       win_file:
         path: C:\Temp
