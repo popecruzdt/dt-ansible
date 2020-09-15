@@ -10,6 +10,13 @@
   hosts: "{{ hosts_group }}"
   name: "dynatrace oneagent install on linux"
   tasks:
+    # Check the OS architecture bitness
+    -
+      name: "check OS architecture"
+      debug:
+        var: ansible_architecture
+      when: ansible_architecture is defined
+    # Validate sudo access 
     -
       name: "validate ansible execution on linux with sudo access"
       shell:
