@@ -152,7 +152,7 @@
     -
       name: "set current host group fact (dt_current_host_group)"
       set_fact:
-        dt_current_host_group: "{{lookup('flattened', current_host_group.stdout_lines)}}"
+        dt_current_host_group: "tpc_test" #"{{lookup('flattened', current_host_group.stdout_lines)}}"
       when: current_host_group is defined
     -
       name: "update/correct host group setting if not correct"
