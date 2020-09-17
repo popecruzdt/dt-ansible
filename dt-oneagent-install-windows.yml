@@ -56,7 +56,7 @@
       win_stat:
         path: C:\Program Files\dynatrace\oneagent\agent\tools
       register: x64_stat
-      when: installed.exists == True and x86_stat.exists == False
+      when: installed.exists == True and x86_stat.stat.exists == False
     -
       name: "set oneagentctl directory"
       set_fact:
