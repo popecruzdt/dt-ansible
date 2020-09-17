@@ -66,7 +66,7 @@
       name: "check current agent version"
       win_shell: .\oneagentctl --version
       args:
-        chdir: {{ dt_oneagentctl_dir }}
+        chdir: '{{ dt_oneagentctl_dir }}'
       register: current_version
       when: installed.exists == True and dt_oneagentctl_dir is defined
       changed_when: False
