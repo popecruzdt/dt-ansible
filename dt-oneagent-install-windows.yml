@@ -46,12 +46,29 @@
         name: DisplayName
       register: installed
     -
+      name: "check for oneagentctl directory in x86 path"
+      win_stat:
+        path: C:\Program Files (x86)\dynatrace\oneagent\agent\tools
+      register: x86_stat
+      when: installed.exists == True
+    -
+      name: "check for oneagentctl directory in x64 path"
+      win_stat:
+        path: C:\Program Files\dynatrace\oneagent\agent\tools
+      register: x64_stat
+      when: installed.exists == True and x86_stat.exists == False
+    -
+      name: "set oneagentctl directory"
+      set_fact:
+        dt_oneagentctl_dir: "{{ 'C:\\Program Files (x86)\\dynatrace\\oneagent\\agent\\tools' if x86_stat.exists == True else 'C:\\Program Files\\dynatrace\\oneagent\\agent\\tools' }}"
+      when: installed.exists == True and (x86_stat.exists == True or x64_stat.exists == True)
+    -
       name: "check current agent version"
       win_shell: .\oneagentctl --version
       args:
-        chdir: C:\Program Files (x86)\dynatrace\oneagent\agent\tools\
+        chdir: {{ dt_oneagentctl_dir }}
       register: current_version
-      when: installed.exists == True
+      when: installed.exists == True and dt_oneagentctl_dir is defined
       changed_when: False
     -
       name: "set oneagent current version fact (dt_current_version)"
