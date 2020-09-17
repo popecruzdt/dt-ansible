@@ -60,8 +60,8 @@
     -
       name: "set oneagentctl directory"
       set_fact:
-        dt_oneagentctl_dir: "{{ 'C:\\Program Files (x86)\\dynatrace\\oneagent\\agent\\tools' if x86_stat.exists == True else 'C:\\Program Files\\dynatrace\\oneagent\\agent\\tools' }}"
-      when: installed.exists == True and (x86_stat.exists == True or x64_stat.exists == True)
+        dt_oneagentctl_dir: "{{ 'C:\\Program Files (x86)\\dynatrace\\oneagent\\agent\\tools' if x86_stat.stat.exists == True else 'C:\\Program Files\\dynatrace\\oneagent\\agent\\tools' }}"
+      when: installed.exists == True and (x86_stat.stat.exists == True or x64_stat.stat.exists == True)
     -
       name: "check current agent version"
       win_shell: .\oneagentctl --version
