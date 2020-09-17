@@ -46,12 +46,29 @@
         name: DisplayName
       register: installed
     -
+      name: "check for oneagentctl directory in x86 path"
+      win_stat:
+        path: C:\Program Files (x86)\dynatrace\oneagent\agent\tools
+      register: x86_stat
+      when: installed.exists == True
+    -
+      name: "check for oneagentctl directory in x64 path"
+      win_stat:
+        path: C:\Program Files\dynatrace\oneagent\agent\tools
+      register: x64_stat
+      when: installed.exists == True and x86_stat.stat.exists == False
+    -
+      name: "set oneagentctl directory"
+      set_fact:
+        dt_oneagentctl_dir: "{{ 'C:\\Program Files (x86)\\dynatrace\\oneagent\\agent\\tools' if x86_stat.stat.exists == True else 'C:\\Program Files\\dynatrace\\oneagent\\agent\\tools' }}"
+      when: installed.exists == True and (x86_stat.stat.exists == True or x64_stat.stat.exists == True)
+    -
       name: "check current agent version"
       win_shell: .\oneagentctl --version
       args:
-        chdir: C:\Program Files (x86)\dynatrace\oneagent\agent\tools\
+        chdir: '{{ dt_oneagentctl_dir }}'
       register: current_version
-      when: installed.exists == True
+      when: installed.exists == True and dt_oneagentctl_dir is defined
       changed_when: False
     -
       name: "set oneagent current version fact (dt_current_version)"
@@ -117,20 +134,29 @@
       failed_when: installed.exists == False
     # Check that the Host Group is correct, if not then correct it
     -
-      name: "get current host group setting"
-      win_shell: .\oneagentctl --get-host-group
-      args:
-        chdir: C:\Program Files (x86)\dynatrace\oneagent\agent\tools\
-      register: current_host_group
-      when: ansible_architecture == "64-bit"
-      changed_when: False
+      name: "check for oneagentctl directory in x86 path"
+      win_stat:
+        path: C:\Program Files (x86)\dynatrace\oneagent\agent\tools
+      register: x86_stat
+      when: installed.exists == True
+    -
+      name: "check for oneagentctl directory in x64 path"
+      win_stat:
+        path: C:\Program Files\dynatrace\oneagent\agent\tools
+      register: x64_stat
+      when: installed.exists == True and x86_stat.stat.exists == False
+    -
+      name: "set oneagentctl directory"
+      set_fact:
+        dt_oneagentctl_dir: "{{ 'C:\\Program Files (x86)\\dynatrace\\oneagent\\agent\\tools' if x86_stat.stat.exists == True else 'C:\\Program Files\\dynatrace\\oneagent\\agent\\tools' }}"
+      when: installed.exists == True and (x86_stat.stat.exists == True or x64_stat.stat.exists == True)
     -
       name: "get current host group setting"
       win_shell: .\oneagentctl --get-host-group
       args:
-        chdir: C:\Program Files\dynatrace\oneagent\agent\tools\
+        chdir: "{{ dt_oneagentctl_dir }}"
       register: current_host_group
-      when: ansible_architecture == "32-bit"
+      when: installed.exists == True and dt_oneagentctl_dir is defined
       changed_when: False
     -
       name: "set current host group fact (dt_current_host_group)"
@@ -144,14 +170,5 @@
         .\oneagentctl --set-host-group={{ dt_host_group }}
         net start "Dynatrace OneAgent"
       args:
-        chdir: C:\Program Files\dynatrace\oneagent\agent\tools\
-      when: dt_current_host_group != dt_host_group and dt_host_group is defined and dt_current_host_group is defined and ansible_architecture == "32-bit"
-    -
-      name: "update/correct host group setting if not correct"
-      win_shell: |
-        net stop "Dynatrace OneAgent"
-        .\oneagentctl --set-host-group={{ dt_host_group }}
-        net start "Dynatrace OneAgent"
-      args:
-        chdir: C:\Program Files (x86)\dynatrace\oneagent\agent\tools\
-      when: dt_current_host_group != dt_host_group and dt_host_group is defined and dt_current_host_group is defined and ansible_architecture == "64-bit"
+        chdir: "{{ dt_oneagentctl_dir }}"
+      when: dt_current_host_group != dt_host_group and dt_host_group is defined and dt_current_host_group is defined and dt_oneagentctl_dir is defined
