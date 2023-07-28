@@ -1,6 +1,14 @@
 ## Summary:
 This repo is a collection of Ansible playbook yaml files designed for automating the onboarding of applications into Dynatrace.  These playbooks were written and tested on Red Hat Ansible Tower, but should work with other platforms such as vanilla Ansible and AWX.
 
+## Dynatrace Support
+For the latest support of Ansible with Dynatrace, please refer to the Dynatrace documentation:\
+https://www.dynatrace.com/support/help/shortlink/oneagent-ansible
+
+## Dynatrace Monaco - Monitoring as Code
+For the latest Dynatrace configuration management, consider integrating Ansible with Monaco:\
+https://www.dynatrace.com/support/help/shortlink/configuration-as-code 
+
 ## Playbooks:
 * dt-oneagent-install-linux.yml - Installs Dynatrace OneAgent (or upgrades) on the target Linux host
 * dt-oneagent-install-windows.yml - Installs Dynatrace OneAgent (or upgrades) on the target Windows host
